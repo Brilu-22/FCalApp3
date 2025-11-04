@@ -119,7 +119,7 @@ export default function HomeScreen() {
               {/* Icon in the middle */}
               <View style={styles.statIconContainer}>
                 <SimpleProgressCircle progress={fitnessData.steps.progress}>
-                  <Ionicons name="footsteps-outline" size={24} color={Colors.accent} />
+                  <Ionicons name="footsteps-outline" size={24} color={Colors.terraCotta} />
                 </SimpleProgressCircle>
               </View>
               
@@ -139,7 +139,7 @@ export default function HomeScreen() {
               {/* Icon in the middle */}
               <View style={styles.statIconContainer}>
                 <SimpleProgressCircle progress={fitnessData.calories.progress}>
-                  <Ionicons name="flame-outline" size={24} color={Colors.accent} />
+                  <Ionicons name="flame-outline" size={24} color={Colors.orange} />
                 </SimpleProgressCircle>
               </View>
               
@@ -153,11 +153,11 @@ export default function HomeScreen() {
         <Card style={styles.weightCard}>
           <View style={styles.cardHeader}>
             <View style={styles.cardTitleContainer}>
-              <Ionicons name="trending-up-outline" size={24} color={Colors.accent} />
+              <Ionicons name="trending-up-outline" size={24} color={Colors.salmon} />
               <Text style={styles.cardTitle}>Weight Journey</Text>
             </View>
             <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="pencil-outline" size={16} color={Colors.secondaryText} />
+              <Ionicons name="pencil-outline" size={16} color={Colors.primaryText} />
             </TouchableOpacity>
           </View>
 
@@ -193,7 +193,7 @@ export default function HomeScreen() {
                     styles.progressBarFill, 
                     { 
                       width: `${progressPercentage}%`,
-                      backgroundColor: weightDifference > 0 ? '#10b981' : Colors.accent
+                      backgroundColor: weightDifference > 0 ? Colors.salmon : Colors.terraCotta
                     }
                   ]} 
                 />
@@ -211,7 +211,7 @@ export default function HomeScreen() {
                         styles.trendBar,
                         { 
                           height: Math.max(20, (point.weight / Math.max(...weightTrend.map(p => p.weight))) * 40),
-                          backgroundColor: index === weightTrend.length - 1 ? Colors.accent : Colors.border
+                          backgroundColor: index === weightTrend.length - 1 ? Colors.orange : Colors.burgundy
                         }
                       ]}
                     />
@@ -233,8 +233,8 @@ export default function HomeScreen() {
                 style={styles.actionButton}
                 onPress={() => router.push('./(tabs)/workouts')}
               >
-                <View style={[styles.actionIcon, { backgroundColor: 'rgba(99, 102, 241, 0.1)' }]}>
-                  <Ionicons name="barbell-outline" size={24} color={Colors.accent} />
+                <View style={[styles.actionIcon, { backgroundColor: Colors.darkRed }]}>
+                  <Ionicons name="barbell-outline" size={24} color={Colors.terraCotta} />
                 </View>
                 <Text style={styles.actionText}>Workouts</Text>
               </TouchableOpacity>
@@ -243,8 +243,8 @@ export default function HomeScreen() {
                 style={styles.actionButton}
                 onPress={() => router.push('./(tabs)/dietary-plan')}
               >
-                <View style={[styles.actionIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
-                  <Ionicons name="restaurant-outline" size={24} color="#10b981" />
+                <View style={[styles.actionIcon, { backgroundColor: Colors.darkRed }]}>
+                  <Ionicons name="restaurant-outline" size={24} color={Colors.orange} />
                 </View>
                 <Text style={styles.actionText}>Nutrition</Text>
               </TouchableOpacity>
@@ -253,15 +253,15 @@ export default function HomeScreen() {
             {/* Bottom Row */}
             <View style={styles.actionsRow}>
               <TouchableOpacity style={styles.actionButton}>
-                <View style={[styles.actionIcon, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
-                  <Ionicons name="water-outline" size={24} color="#3b82f6" />
+                <View style={[styles.actionIcon, { backgroundColor: Colors.darkRed }]}>
+                  <Ionicons name="water-outline" size={24} color={Colors.salmon} />
                 </View>
                 <Text style={styles.actionText}>Hydration</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.actionButton}>
-                <View style={[styles.actionIcon, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
-                  <Ionicons name="bed-outline" size={24} color="#f59e0b" />
+                <View style={[styles.actionIcon, { backgroundColor: Colors.darkRed }]}>
+                  <Ionicons name="bed-outline" size={24} color={Colors.burgundy} />
                 </View>
                 <Text style={styles.actionText}>Sleep</Text>
               </TouchableOpacity>
@@ -272,7 +272,7 @@ export default function HomeScreen() {
         {/* Daily Motivation */}
         <Card style={styles.motivationCard}>
           <View style={styles.motivationContent}>
-            <Ionicons name="sparkles" size={32} color={Colors.accent} />
+            <Ionicons name="sparkles" size={32} color={Colors.orange} />
             <View style={styles.motivationText}>
               <Text style={styles.motivationTitle}>Daily Motivation</Text>
               <Text style={styles.motivationQuote}>
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     borderWidth: 3,
-    borderColor: Colors.terraCotta, // Updated to new color
+    borderColor: Colors.terraCotta,
   },
   dateTimeContainer: {
     flexDirection: 'row',
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 16,
-    color: Colors.orange, // Updated to new color
+    color: Colors.orange,
     fontWeight: 'bold',
   },
   statsGrid: {
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   statNumber: {
-    fontSize: 15, // Reduced from 22 to 18
+    fontSize: 15,
     fontWeight: 'light',
     color: Colors.primaryText,
     marginTop: 4,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
   simpleProgressOuter: {
     position: 'absolute',
-    backgroundColor: Colors.burgundy, // Updated to new color
+    backgroundColor: Colors.burgundy,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   },
   simpleProgressIndicator: {
     position: 'absolute',
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.terraCotta,
     opacity: 0.3,
   },
   progressCircleContent: {
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   editButton: {
     padding: 6,
     borderRadius: 8,
-    backgroundColor: Colors.darkRed, // Updated to new color
+    backgroundColor: Colors.darkRed,
   },
   weightProgress: {
     gap: 20,
@@ -459,10 +459,10 @@ const styles = StyleSheet.create({
     color: Colors.primaryText,
   },
   weightLoss: {
-    color: Colors.salmon, // Updated to new color
+    color: Colors.salmon,
   },
   weightGain: {
-    color: Colors.terraCotta, // Updated to new color
+    color: Colors.terraCotta,
   },
   progressContainer: {
     gap: 8,
@@ -477,14 +477,14 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     height: 8,
-    backgroundColor: Colors.burgundy, // Updated to new color
+    backgroundColor: Colors.burgundy,
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
     borderRadius: 4,
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.terraCotta,
   },
   trendContainer: {
     gap: 12,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 6,
     minHeight: 4,
-    backgroundColor: Colors.orange, // Updated to new color
+    backgroundColor: Colors.orange,
   },
   trendLabel: {
     fontSize: 10,
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   actionsCard: {
     marginBottom: 16,
     padding: 20,
-    backgroundColor: Colors.darkRed, // Added new color
+    backgroundColor: Colors.darkRed,
   },
   actionsTitle: {
     fontSize: 20,
@@ -537,10 +537,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-    backgroundColor: Colors.burgundy, // Updated to new color
+    backgroundColor: Colors.burgundy,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.terraCotta, // Updated to new color
+    borderColor: Colors.terraCotta,
   },
   actionIcon: {
     width: 56,
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.darkRed,
   },
   actionText: {
     fontSize: 16,
@@ -560,9 +560,9 @@ const styles = StyleSheet.create({
   motivationCard: {
     marginBottom: 24,
     padding: 20,
-    backgroundColor: Colors.darkRed, // Updated to new color
+    backgroundColor: Colors.darkRed,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.orange, // Updated to new color
+    borderLeftColor: Colors.orange,
   },
   motivationContent: {
     flexDirection: 'row',
