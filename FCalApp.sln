@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FitCalBackend", "FitCalBackend", "{E42B89CB-8F72-814E-EFA1-065437F3A13C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFitnessBackend", "FitCalBackend\MyFitnessBackend\MyFitnessBackend.csproj", "{4104CF47-C1E7-8800-2F64-92239512F4F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4104CF47-C1E7-8800-2F64-92239512F4F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4104CF47-C1E7-8800-2F64-92239512F4F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4104CF47-C1E7-8800-2F64-92239512F4F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4104CF47-C1E7-8800-2F64-92239512F4F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4104CF47-C1E7-8800-2F64-92239512F4F3} = {E42B89CB-8F72-814E-EFA1-065437F3A13C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79B21B45-C13E-4A05-8C33-55B7FDB89F69}
+	EndGlobalSection
+EndGlobal
