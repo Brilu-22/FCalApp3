@@ -311,11 +311,13 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 4,
+    backgroundColor: Colors.darkRed, // Added new color
+    borderRadius: 6,
   },
   workoutName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.accent,
+    color: Colors.terraCotta, // Updated to new color
     marginTop: 4,
   },
   secondaryText: {
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
   },
   lineBreak: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.burgundy, // Updated to new color
     marginVertical: 12,
   },
   workoutStatsRow: {
@@ -335,6 +337,10 @@ const styles = StyleSheet.create({
   },
   workoutStatItem: {
     alignItems: 'center',
+    backgroundColor: Colors.darkRed, // Added new color
+    padding: 12,
+    borderRadius: 10,
+    marginHorizontal: 5,
   },
   statNumber: {
     fontSize: 28,
@@ -350,8 +356,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: Colors.burgundy, // Updated to new color
+    backgroundColor: Colors.darkRed, // Added new color
+    borderRadius: 8,
+    marginBottom: 6,
   },
   historyDate: {
     fontSize: 16,
@@ -367,14 +377,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     marginTop: 10,
+    backgroundColor: Colors.orange, // Added new color
+    padding: 10,
+    borderRadius: 8,
   },
   seeAllButtonText: {
-    color: Colors.accent,
+    color: Colors.primaryText, // Updated for better contrast
     marginRight: 4,
     fontSize: 16,
+    fontWeight: '600',
   },
   generateNewPlanButton: {
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to new color
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -393,6 +407,9 @@ const styles = StyleSheet.create({
   },
   anatomyCard: {
     alignItems: 'center',
+    backgroundColor: Colors.darkRed, // Added new color
+    padding: 16,
+    borderRadius: 12,
   },
   silhouetteContainer: {
     width: 300,
@@ -411,12 +428,12 @@ const styles = StyleSheet.create({
   },
   bodyPartZone: {
     position: 'absolute',
-    backgroundColor: 'rgba(10, 132, 255, 0.3)', // Semi-transparent accent color
+    backgroundColor: 'rgba(195, 61, 22, 0.3)', // Updated to terraCotta with transparency
     borderRadius: 10,
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: Colors.accent,
+    borderColor: Colors.terraCotta, // Updated to new color
     borderWidth: 1,
   },
   zoneText: {
@@ -451,11 +468,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.primaryText,
     marginBottom: 5, // Less margin for stacked inputs
-    borderColor: Colors.border,
+    borderColor: Colors.orange, // Updated to new color
     borderWidth: 1,
   },
   textArea: {
     height: 100, // Make multiline input taller
     textAlignVertical: 'top', // Aligns text to the top
+    borderColor: Colors.salmon, // Updated to new color
   }
 });
