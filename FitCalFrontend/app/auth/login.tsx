@@ -33,8 +33,11 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* MOVE. Logo */}
-        <Text style={styles.logo}>MOVE.</Text>
+        {/* MOVE. Logo with sporty styling */}
+        <View style={styles.logoContainer}>
+          <Text style={styles.logo}>MOVE</Text>
+          <Text style={styles.logoDot}>.</Text>
+        </View>
         
         <Text style={styles.header}>Welcome Back</Text>
 
@@ -84,12 +87,27 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: Colors.background,
   },
-  logo: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: Colors.terraCotta, // Updated to new color
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
     marginBottom: 10,
-    letterSpacing: 1,
+  },
+  logo: {
+    fontSize: 52,
+    fontWeight: '900', 
+    color: Colors.border,
+    letterSpacing: 2, // Increased letter spacing for athletic feel
+    textTransform: 'uppercase', // Uppercase for stronger impact
+    fontFamily: 'System', // This will use the system's boldest font
+    textShadowColor: 'rgba(49, 49, 49, 0.3)', // Subtle shadow for depth
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  logoDot: {
+    fontSize: 52,
+    fontWeight: '900',
+    color: Colors.border, // Different color for the dot to make it pop
+    fontFamily: 'System',
   },
   header: {
     fontSize: 32,
@@ -99,18 +117,17 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: Colors.darkRed, // Updated to new color
     borderRadius: 10,
     padding: 15,
     fontSize: 16,
     color: Colors.primaryText,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: Colors.burgundy, // Updated to new color
+    borderColor: Colors.border,
   },
   button: {
     width: '100%',
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.terraCotta,
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',
@@ -122,7 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   switchText: {
-    color: Colors.orange, // Updated to new color
+    color: Colors.orange,
     marginTop: 20,
     fontSize: 16,
     fontWeight: '600',
