@@ -121,19 +121,19 @@ const styles = StyleSheet.create({
   },
   logo: {
     fontSize: 52,
-    fontWeight: '900', // Extra bold for sporty look
-    color: Colors.terraCotta,
+    fontWeight: '900', 
+    color: Colors.border,
     letterSpacing: 2, // Increased letter spacing for athletic feel
     textTransform: 'uppercase', // Uppercase for stronger impact
     fontFamily: 'System', // This will use the system's boldest font
-    textShadowColor: 'rgba(195, 61, 22, 0.3)', // Subtle shadow for depth
+    textShadowColor: 'rgba(49, 49, 49, 0.3)', // Subtle shadow for depth
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
   logoDot: {
     fontSize: 52,
     fontWeight: '900',
-    color: Colors.orange, // Different color for the dot to make it pop
+    color: Colors.border, // Different color for the dot to make it pop
     fontFamily: 'System',
   },
   header: {
@@ -144,14 +144,13 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: Colors.darkRed,
     borderRadius: 10,
     padding: 15,
     fontSize: 16,
     color: Colors.primaryText,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: Colors.burgundy,
+    borderColor: Colors.border,
   },
   button: {
     width: '100%',

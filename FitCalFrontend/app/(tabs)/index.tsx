@@ -342,11 +342,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginBottom: 16,
+    borderColor: Colors.burgundy,
   },
   statCard: {
     flex: 1,
     padding: 24,
-    backgroundColor: Colors.darkRed, // Added new color
+    borderColor: Colors.burgundy,
+    borderWidth: 1,
+    backgroundColor: Colors.background,
   },
   statContent: {
     alignItems: 'center',
@@ -371,10 +374,10 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   statNumber: {
-    fontSize: 18, // Reduced from 22 to 18
-    fontWeight: 'bold',
+    fontSize: 15, // Reduced from 22 to 18
+    fontWeight: 'light',
     color: Colors.primaryText,
-    marginTop: 12,
+    marginTop: 4,
   },
   // Simple progress circle styles
   simpleProgressContainer: {
@@ -408,7 +411,9 @@ const styles = StyleSheet.create({
   weightCard: {
     marginBottom: 16,
     padding: 20,
-    backgroundColor: Colors.burgundy, // Added new color
+    backgroundColor: Colors.background, 
+    borderColor: Colors.burgundy,
+    borderWidth: 1,
   },
   cardHeader: {
     flexDirection: 'row',
