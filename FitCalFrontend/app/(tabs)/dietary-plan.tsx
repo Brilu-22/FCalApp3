@@ -441,6 +441,7 @@ const styles = StyleSheet.create({
     padding: 30,
     margin: 20,
     marginTop: 40,
+    backgroundColor: Colors.darkRed, // Added new color
   },
   noPlanTitle: {
     fontSize: 22,
@@ -457,7 +458,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   generatePlanButton: {
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to new color
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 24,
@@ -487,11 +488,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginHorizontal: 6,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: Colors.burgundy, // Updated to new color
   },
   dayButtonSelected: {
-    backgroundColor: Colors.accent,
-    borderColor: Colors.accent,
+    backgroundColor: Colors.orange, // Updated to new color
+    borderColor: Colors.orange, // Updated to new color
   },
   dayButtonText: {
     fontSize: 15,
@@ -507,6 +508,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 20,
     alignItems: 'center',
+    backgroundColor: Colors.burgundy, // Added new color
   },
   dayTitle: {
     fontSize: 24,
@@ -525,6 +527,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 0,
     overflow: 'hidden',
+    backgroundColor: Colors.darkRed, // Added new color
   },
   mealItemContainer: {
     flexDirection: 'row',
@@ -542,7 +545,7 @@ const styles = StyleSheet.create({
   },
   mealType: {
     fontSize: 12,
-    color: Colors.accent,
+    color: Colors.salmon, // Updated to new color
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -565,6 +568,8 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: Colors.background,
     borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.terraCotta, // Added new color
   },
   nutritionTitle: {
     fontSize: 12,
@@ -580,13 +585,13 @@ const styles = StyleSheet.create({
   snacksHeader: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.primaryText,
     margin: 16,
     marginBottom: 8,
+    color: Colors.orange, // Updated to new color
   },
   snackSeparator: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.terraCotta, // Updated to new color
     marginHorizontal: 16,
   },
 });
