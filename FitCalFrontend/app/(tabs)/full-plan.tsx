@@ -17,7 +17,7 @@ interface PlanData {
     workoutDurationMinutes: number;
     daysPerWeek: number;
     prompt?: string;
-  };//New line 
+  };
 }
 
 export default function FullPlanScreen() {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.darkRed, // Updated to use new color
   },
   headerTitle: {
     fontSize: 20,
@@ -352,6 +352,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 12,
     padding: 20,
+    backgroundColor: Colors.burgundy, // Updated to use new color
   },
   summaryTitle: {
     fontSize: 20,
@@ -388,11 +389,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: Colors.terraCotta, // Updated to use new color
   },
   promptLabel: {
     fontSize: 14,
-    color: Colors.secondaryText,
+    color: Colors.orange, // Updated to use new color
     fontWeight: '600',
     marginBottom: 6,
   },
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   activeTab: {
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to use new color
   },
   tabText: {
     fontSize: 16,
@@ -439,6 +440,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 20,
     alignItems: 'center',
+    backgroundColor: Colors.salmon, // Updated to use new color
   },
   contentTitle: {
     fontSize: 22,
@@ -458,20 +460,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 0,
     overflow: 'hidden',
+    backgroundColor: Colors.darkRed, // Updated to use new color
   },
   dayHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.burgundy, // Updated to use new color
   },
   dayTitleContainer: {
     flex: 1,
   },
   dayNumber: {
     fontSize: 14,
-    color: Colors.accent,
+    color: Colors.orange, // Updated to use new color
     fontWeight: 'bold',
     marginBottom: 2,
   },
@@ -518,12 +521,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   primaryButton: {
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to use new color
   },
   secondaryButton: {
     backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: Colors.accent,
+    borderColor: Colors.orange, // Updated to use new color
   },
   actionButtonText: {
     fontSize: 16,
@@ -532,10 +535,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   secondaryButtonText: {
-    color: Colors.accent,
+    color: Colors.orange, // Updated to use new color
   },
   generateButton: {
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to use new color
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
