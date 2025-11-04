@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     borderWidth: 3,
-    borderColor: Colors.accent,
+    borderColor: Colors.terraCotta, // Updated to new color
   },
   dateTimeContainer: {
     flexDirection: 'row',
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 16,
-    color: Colors.accent,
+    color: Colors.orange, // Updated to new color
     fontWeight: 'bold',
   },
   statsGrid: {
@@ -346,6 +346,7 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     padding: 24,
+    backgroundColor: Colors.darkRed, // Added new color
   },
   statContent: {
     alignItems: 'center',
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   },
   simpleProgressOuter: {
     position: 'absolute',
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.burgundy, // Updated to new color
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
   },
   simpleProgressIndicator: {
     position: 'absolute',
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to new color
     opacity: 0.3,
   },
   progressCircleContent: {
@@ -407,6 +408,7 @@ const styles = StyleSheet.create({
   weightCard: {
     marginBottom: 16,
     padding: 20,
+    backgroundColor: Colors.burgundy, // Added new color
   },
   cardHeader: {
     flexDirection: 'row',
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
   editButton: {
     padding: 6,
     borderRadius: 8,
-    backgroundColor: Colors.background || '#1a1a1a',
+    backgroundColor: Colors.darkRed, // Updated to new color
   },
   weightProgress: {
     gap: 20,
@@ -452,10 +454,10 @@ const styles = StyleSheet.create({
     color: Colors.primaryText,
   },
   weightLoss: {
-    color: '#10b981',
+    color: Colors.salmon, // Updated to new color
   },
   weightGain: {
-    color: Colors.accent,
+    color: Colors.terraCotta, // Updated to new color
   },
   progressContainer: {
     gap: 8,
@@ -470,13 +472,14 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     height: 8,
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.burgundy, // Updated to new color
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
     borderRadius: 4,
+    backgroundColor: Colors.terraCotta, // Updated to new color
   },
   trendContainer: {
     gap: 12,
@@ -501,6 +504,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 6,
     minHeight: 4,
+    backgroundColor: Colors.orange, // Updated to new color
   },
   trendLabel: {
     fontSize: 10,
@@ -509,6 +513,7 @@ const styles = StyleSheet.create({
   actionsCard: {
     marginBottom: 16,
     padding: 20,
+    backgroundColor: Colors.darkRed, // Added new color
   },
   actionsTitle: {
     fontSize: 20,
@@ -527,10 +532,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-    backgroundColor: Colors.background || '#1a1a1a',
+    backgroundColor: Colors.burgundy, // Updated to new color
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.terraCotta, // Updated to new color
   },
   actionIcon: {
     width: 56,
@@ -539,6 +544,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    backgroundColor: Colors.terraCotta, // Updated to new color
   },
   actionText: {
     fontSize: 16,
@@ -549,9 +555,9 @@ const styles = StyleSheet.create({
   motivationCard: {
     marginBottom: 24,
     padding: 20,
-    backgroundColor: Colors.background || '#1a1a1a',
+    backgroundColor: Colors.darkRed, // Updated to new color
     borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
+    borderLeftColor: Colors.orange, // Updated to new color
   },
   motivationContent: {
     flexDirection: 'row',
