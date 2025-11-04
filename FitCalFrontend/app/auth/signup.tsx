@@ -52,6 +52,9 @@ export default function SignUpScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        {/* MOVE. Logo */}
+        <Text style={styles.logo}>MOVE.</Text>
+        
         <Text style={styles.header}>Create Account</Text>
 
         <TextInput
@@ -108,6 +111,13 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: Colors.background,
   },
+  logo: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: Colors.terraCotta, // Updated to new color
+    marginBottom: 10,
+    letterSpacing: 1,
+  },
   header: {
     fontSize: 32,
     fontWeight: 'bold',
@@ -116,16 +126,18 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.darkRed, // Updated to new color
     borderRadius: 10,
     padding: 15,
     fontSize: 16,
     color: Colors.primaryText,
     marginBottom: 15,
+    borderWidth: 1,
+    borderColor: Colors.burgundy, // Updated to new color
   },
   button: {
     width: '100%',
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta, // Updated to new color
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',
@@ -137,8 +149,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   switchText: {
-    color: Colors.accent,
+    color: Colors.orange, // Updated to new color
     marginTop: 20,
     fontSize: 16,
+    fontWeight: '600',
   },
 });
