@@ -22,7 +22,7 @@ const getBaseUrl = () => {
 
 const API_BASE_URL = getBaseUrl();
 
-const humanSilhouetteImage = 'https://via.placeholder.com/300x500/0D0D0D/FFFFFF?text=Human+Anatomy'; // Placeholder
+const humanSilhouetteImage = 'https://share.google/images/ZCcBjrGRN5784Q8wZ'; // Placeholder
 
 export default function WorkoutsScreen() {
   const user = useUser(); // Get user data from context
@@ -142,14 +142,14 @@ export default function WorkoutsScreen() {
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>Current Plan Summary</Text>
             <TouchableOpacity style={styles.editButton} onPress={() => router.push('/(tabs)/full-plan')}>
-              <Ionicons name="eye-outline" size={20} color={Colors.accent} />
+              <Ionicons name="eye-outline" size={20} color={Colors.orange} />
             </TouchableOpacity>
           </View>
           <Text style={styles.workoutName}>Your AI Generated Plan</Text>
           <Text style={styles.secondaryText}>Tap "View Full Plan" to see details.</Text>
           <TouchableOpacity style={styles.seeAllButton} onPress={() => router.push('/(tabs)/full-plan')}>
             <Text style={styles.seeAllButtonText}>View Full Plan</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.accent} />
+            <Ionicons name="chevron-forward" size={16} color={Colors.orange} />
           </TouchableOpacity>
           
         </Card>
@@ -272,7 +272,7 @@ export default function WorkoutsScreen() {
           </View>
           <TouchableOpacity style={styles.seeAllButton}>
             <Text style={styles.seeAllButtonText}>See all workouts</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.accent} />
+            <Ionicons name="chevron-forward" size={16} color={Colors.orange} />
           </TouchableOpacity>
         </Card>
 
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   },
   anatomyCard: {
     alignItems: 'center',
-    backgroundColor: Colors.darkRed, // Added new color
+    backgroundColor: Colors.background, // Added new color
     padding: 16,
     borderRadius: 12,
   },
@@ -441,12 +441,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-  // Example positions - these would require careful tuning based on your actual image
+  // Example positions - these would require careful tuning based on the actual image
   zoneHead: { top: 10, left: '35%', width: '30%', height: 60 },
   zoneChest: { top: 120, left: '25%', width: '50%', height: 80 },
   zoneArms: { top: 180, left: 10, width: 80, height: 100 },
   zoneCore: { top: 220, left: '30%', width: '40%', height: 80 },
-  zoneBack: { top: 200, right: 10, width: 80, height: 100 }, // Assuming we can show back or use front for general upper
+  zoneBack: { top: 200, right: 10, width: 80, height: 100 }, 
   zoneLegs: { bottom: 20, left: '20%', width: '60%', height: 180 },
   selectedBodyPartText: {
     marginTop: 15,
@@ -467,8 +467,8 @@ const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
     color: Colors.primaryText,
-    marginBottom: 5, // Less margin for stacked inputs
-    borderColor: Colors.orange, // Updated to new color
+    marginBottom: 5, 
+    borderColor: Colors.orange, 
     borderWidth: 1,
   },
   textArea: {

@@ -12,7 +12,7 @@ export default function TabLayout() {
       <StatusBar style="light" backgroundColor={Colors.background} />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors.accent,
+          tabBarActiveTintColor: Colors.orange,
           tabBarInactiveTintColor: Colors.secondaryText,
           tabBarStyle: {
             backgroundColor: Colors.card,
@@ -45,7 +45,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="dietary-plan"
           options={{
-            title: 'meals',
+            title: 'Meals',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
             ),

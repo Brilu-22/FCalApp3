@@ -43,10 +43,24 @@ interface DailyPlan {
   };
 }
 
-// Helper to generate a placeholder image URL based on meal name
+// Better placeholder images using a reliable service
 const generateImageUrl = (mealName: string) => {
-  const query = encodeURIComponent(mealName + " healthy food");
-  return `https://source.unsplash.com/300x200/?${query}`;
+  // Use a reliable placeholder service
+  const mealTypes = {
+    breakfast: 'https://images.unsplash.com/photo-1551782450-17144efb9c50?w=300&h=200&fit=crop',
+    lunch: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=200&fit=crop',
+    dinner: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop',
+    snack: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300&h=200&fit=crop',
+    default: 'https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=300&h=200&fit=crop'
+  };
+
+  const lowerMeal = mealName.toLowerCase();
+  if (lowerMeal.includes('breakfast')) return mealTypes.breakfast;
+  if (lowerMeal.includes('lunch')) return mealTypes.lunch;
+  if (lowerMeal.includes('dinner')) return mealTypes.dinner;
+  if (lowerMeal.includes('snack')) return mealTypes.snack;
+  
+  return mealTypes.default;
 };
 
 // SIMPLIFIED PARSER - This will definitely work with your AI response format
@@ -245,7 +259,11 @@ export default function DietaryPlanScreen() {
       <Image 
         source={{ uri: meal.image_url }} 
         style={styles.mealImage}
-        onError={(e) => console.log('Image failed to load:', e.nativeEvent.error)}
+        defaultSource={require('../../assets/food.png')} // Add a local fallback
+        onError={(e) => {
+          console.log('Image failed to load, using fallback');
+          // You could set a local fallback image here
+        }}
       />
       <View style={styles.mealDetails}>
         <Text style={styles.mealType}>{mealType}</Text>
@@ -267,7 +285,7 @@ export default function DietaryPlanScreen() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.accent} />
+          <ActivityIndicator size="large" color={Colors.terraCotta} />
           <Text style={styles.loadingText}>Loading your dietary plan...</Text>
         </View>
       </SafeAreaView>
@@ -299,7 +317,7 @@ export default function DietaryPlanScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.accent}
+            tintColor={Colors.terraCotta}
           />
         }
       >
@@ -441,7 +459,7 @@ const styles = StyleSheet.create({
     padding: 30,
     margin: 20,
     marginTop: 40,
-    backgroundColor: Colors.darkRed, // Added new color
+    backgroundColor: Colors.darkRed,
   },
   noPlanTitle: {
     fontSize: 22,
@@ -458,7 +476,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   generatePlanButton: {
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.terraCotta,
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 24,
@@ -488,11 +506,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginHorizontal: 6,
     borderWidth: 2,
-    borderColor: Colors.burgundy, // Updated to new color
+    borderColor: Colors.burgundy,
   },
   dayButtonSelected: {
-    backgroundColor: Colors.orange, // Updated to new color
-    borderColor: Colors.orange, // Updated to new color
+    backgroundColor: Colors.orange,
+    borderColor: Colors.red,
   },
   dayButtonText: {
     fontSize: 15,
@@ -508,7 +526,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 20,
     alignItems: 'center',
-    backgroundColor: Colors.burgundy, // Added new color
+    borderColor: Colors.terraCotta,
+    backgroundColor: Colors.background,
+    borderWidth: 1,
   },
   dayTitle: {
     fontSize: 24,
@@ -527,7 +547,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 0,
     overflow: 'hidden',
-    backgroundColor: Colors.darkRed, // Added new color
+    backgroundColor: Colors.darkRed,
   },
   mealItemContainer: {
     flexDirection: 'row',
@@ -545,7 +565,7 @@ const styles = StyleSheet.create({
   },
   mealType: {
     fontSize: 12,
-    color: Colors.salmon, // Updated to new color
+    color: Colors.salmon,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -569,7 +589,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     borderRadius: 8,
     borderLeftWidth: 3,
-    borderLeftColor: Colors.terraCotta, // Added new color
+    borderLeftColor: Colors.terraCotta,
   },
   nutritionTitle: {
     fontSize: 12,
@@ -587,11 +607,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 16,
     marginBottom: 8,
-    color: Colors.orange, // Updated to new color
+    color: Colors.orange,
   },
   snackSeparator: {
     height: 1,
-    backgroundColor: Colors.terraCotta, // Updated to new color
+    backgroundColor: Colors.terraCotta,
     marginHorizontal: 16,
   },
 });

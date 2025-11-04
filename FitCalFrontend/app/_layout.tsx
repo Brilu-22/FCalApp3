@@ -9,15 +9,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
-// Define the shape of our authentication state
+
 interface AuthState {
-  targetWeight: number | null; // Assuming number, use 'any' if unsure
-  currentWeight: number | null; // Assuming number, use 'any' if unsure
+  targetWeight: number | null; 
+  currentWeight: number | null; 
   displayName: string | null;
   email: string | null;
   photoURL: string;
   user: User | null;
-  isLoading: boolean; // Indicates if the initial auth check is still in progress
+  isLoading: boolean; 
 }
 
 // Custom hook to provide user state
@@ -38,21 +38,20 @@ export default function RootLayout() {
     displayName: null,
     email: null,
     photoURL: '',
-    targetWeight: null, // Initialized
-    currentWeight: null, // Initialized
+    targetWeight: null, 
+    currentWeight: null,
   });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setAuthState((prevState) => ({ // Use functional update to ensure latest state
+      setAuthState((prevState) => ({ 
         ...prevState, // Keep existing targetWeight and currentWeight unless updated here
         user: firebaseUser,
         isLoading: false,
         displayName: firebaseUser?.displayName ?? null,
         email: firebaseUser?.email ?? null,
         photoURL: firebaseUser?.photoURL ?? '',
-        // If targetWeight/currentWeight should be reset or fetched with user,
-        // you'd do it here. For now, they persist or stay null if not set.
+       
       }));
       SplashScreen.hideAsync();
     });

@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     width: '100%',
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.terraCotta,
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

@@ -181,28 +181,28 @@ export default function FullPlanScreen() {
           <Text style={styles.summaryTitle}>Plan Overview</Text>
           <View style={styles.summaryGrid}>
             <View style={styles.summaryItem}>
-              <Ionicons name="scale-outline" size={20} color={Colors.accent} />
+              <Ionicons name="scale-outline" size={20} color={Colors.orange} />
               <View style={styles.summaryTextContainer}>
                 <Text style={styles.summaryLabel}>Current Weight</Text>
                 <Text style={styles.summaryValue}>{planData.params.currentWeightKg} kg</Text>
               </View>
             </View>
             <View style={styles.summaryItem}>
-              <Ionicons name="flag-outline" size={20} color={Colors.accent} />
+              <Ionicons name="flag-outline" size={20} color={Colors.orange} />
               <View style={styles.summaryTextContainer}>
                 <Text style={styles.summaryLabel}>Target Weight</Text>
                 <Text style={styles.summaryValue}>{planData.params.targetWeightKg} kg</Text>
               </View>
             </View>
             <View style={styles.summaryItem}>
-              <Ionicons name="time-outline" size={20} color={Colors.accent} />
+              <Ionicons name="time-outline" size={20} color={Colors.orange} />
               <View style={styles.summaryTextContainer}>
                 <Text style={styles.summaryLabel}>Duration</Text>
                 <Text style={styles.summaryValue}>{planData.params.workoutDurationMinutes} min</Text>
               </View>
             </View>
             <View style={styles.summaryItem}>
-              <Ionicons name="calendar-outline" size={20} color={Colors.accent} />
+              <Ionicons name="calendar-outline" size={20} color={Colors.orange} />
               <View style={styles.summaryTextContainer}>
                 <Text style={styles.summaryLabel}>Days/Week</Text>
                 <Text style={styles.summaryValue}>{planData.params.daysPerWeek}</Text>
@@ -228,7 +228,7 @@ export default function FullPlanScreen() {
               <Ionicons 
                 name="barbell-outline" 
                 size={20} 
-                color={activeTab === 'workout' ? Colors.primaryText : Colors.secondaryText} 
+                color={activeTab === 'workout' ? Colors.primaryText : Colors.primaryText} 
               />
               <Text style={[styles.tabText, activeTab === 'workout' && styles.activeTabText]}>
                 Workouts
@@ -241,7 +241,7 @@ export default function FullPlanScreen() {
               <Ionicons 
                 name="nutrition-outline" 
                 size={20} 
-                color={activeTab === 'diet' ? Colors.primaryText : Colors.secondaryText} 
+                color={activeTab === 'diet' ? Colors.primaryText : Colors.primaryText} 
               />
               <Text style={[styles.tabText, activeTab === 'diet' && styles.activeTabText]}>
                 Nutrition
@@ -272,7 +272,7 @@ export default function FullPlanScreen() {
             style={[styles.actionButton, styles.secondaryButton]}
             onPress={() => router.push('./(tabs)/workouts')}
           >
-            <Ionicons name="refresh-outline" size={20} color={Colors.accent} />
+            <Ionicons name="refresh-outline" size={20} color={Colors.primaryText} />
             <Text style={[styles.actionButtonText, styles.secondaryButtonText]}>New Plan</Text>
           </TouchableOpacity>
           
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: Colors.darkRed, // Updated to use new color
+
   },
   headerTitle: {
     fontSize: 20,
@@ -352,7 +352,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 12,
     padding: 20,
-    backgroundColor: Colors.burgundy, // Updated to use new color
+    backgroundColor: Colors.background, 
+    borderColor: Colors.burgundy,
+    borderWidth: 1,
   },
   summaryTitle: {
     fontSize: 20,
