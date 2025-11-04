@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 20,
-    backgroundColor: Colors.burgundy,
+    backgroundColor: Colors.background,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: Colors.terraCotta,
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   },
   motivationQuote: {
     fontSize: 14,
-    color: Colors.secondaryText,
+    color: Colors.primaryText,
     fontStyle: 'italic',
     lineHeight: 20,
   },
