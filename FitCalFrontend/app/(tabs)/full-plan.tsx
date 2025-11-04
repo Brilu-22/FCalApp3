@@ -17,7 +17,7 @@ interface PlanData {
     workoutDurationMinutes: number;
     daysPerWeek: number;
     prompt?: string;
-  };
+  };//New line 
 }
 
 export default function FullPlanScreen() {
