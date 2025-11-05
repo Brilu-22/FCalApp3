@@ -39,7 +39,7 @@ _Experience the seamless flow of AI-powered fitness planning - From workout gene
 | Personalized                              | Intelligent                            | Beautiful                      |
 | :---------------------------------------- | :------------------------------------- | :----------------------------- |
 | Tailored workouts for your specific goals | AI-driven nutrition and exercise plans | iOS-inspired elegant interface |
-| ** Tracking**                             | ** Fast**                              | ** Modern**                    |
+| Tracking                                  | Fast                                   | Modern                         |
 | Comprehensive progress analytics          | Lightning-fast performance             | Built with latest technologies |
 
 <br />
@@ -60,7 +60,7 @@ _Experience the seamless flow of AI-powered fitness planning - From workout gene
 | **Dietary Section**       | 100% ✅ | "Straightforward and actually helpful for meal planning" |
 | **Overall Understanding** | 8.5/10  | "The AI explanations are clear and actionable"           |
 
-![User Testing Results](./assets/user-testing-results.png)
+![User Testing Results](./FitCalFrontend/assets/Untitled%2014.jpg)
 
 ### **What Our Users Love**
 
@@ -69,7 +69,7 @@ _Experience the seamless flow of AI-powered fitness planning - From workout gene
 > _"Most intuitive fitness app I've used - no learning curve required"_  
 > _"The meal plans are realistic and the nutrition info is super helpful"_
 
-![User Feedback](./assets/user-feedback-collage.png)d actionable" |
+![User Feedback](./FitCalFrontend/assets/Untitled%2015.jpg)d actionable" |
 
 <br />
 
