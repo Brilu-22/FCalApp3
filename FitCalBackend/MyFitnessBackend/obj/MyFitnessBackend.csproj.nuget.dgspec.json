@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj": {}
+    "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj": {}
   },
   "projects": {
-    "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj": {
+    "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
+        "projectUniqueName": "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
         "projectName": "MyFitnessBackend",
-        "projectPath": "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
+        "projectPath": "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
         "packagesPath": "/Users/brilubokaba/.nuget/packages/",
-        "outputPath": "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/obj/",
+        "outputPath": "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/brilubokaba/.nuget/NuGet/NuGet.Config"

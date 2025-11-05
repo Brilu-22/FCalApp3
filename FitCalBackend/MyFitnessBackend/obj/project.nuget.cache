@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Fb+OPiiCkX4=",
+  "dgSpecHash": "+1jtTnmMIIs=",
   "success": true,
-  "projectFilePath": "/Users/brilubokaba/Documents/FCalApp2/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
+  "projectFilePath": "/Users/brilubokaba/Downloads/FCalApp3/FitCalBackend/MyFitnessBackend/MyFitnessBackend.csproj",
   "expectedPackageFiles": [
     "/Users/brilubokaba/.nuget/packages/microsoft.aspnetcore.cors/2.3.0/microsoft.aspnetcore.cors.2.3.0.nupkg.sha512",
     "/Users/brilubokaba/.nuget/packages/microsoft.aspnetcore.http.abstractions/2.3.0/microsoft.aspnetcore.http.abstractions.2.3.0.nupkg.sha512",
