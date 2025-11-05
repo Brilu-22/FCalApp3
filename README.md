@@ -398,7 +398,7 @@ FIREBASE_CONFIG={"apiKey":"xxx","authDomain":"xxx","projectId":"xxx"}
 
 | Channel              |     | Contact Method                                                               |
 | -------------------- | --- | ---------------------------------------------------------------------------- |
-| **Email Support**    |     | brilu.bokaba@example.com                                                     |
+| **Email Support**    |     | brilu.bokaba@gamil.com                                                       |
 | **Bug Reports**      |     | [GitHub Issues](https://github.com/yourusername/fitcal-app/issues)           |
 | **Feature Requests** |     | [GitHub Discussions](https://github.com/yourusername/fitcal-app/discussions) |
 | **Documentation**    |     | [Full Wiki & Guides](https://github.com/yourusername/fitcal-app/wiki)        |
