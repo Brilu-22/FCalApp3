@@ -1,8 +1,7 @@
-// FitzFrontend/firebaseConfig.ts - CORRECTED VERSION WITH ASYNCSTORAGE PERSISTENCE
+// FitzFrontend/firebaseConfig.ts - SIMPLIFIED VERSION
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth'; // Should now resolve correctly
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Your Firebase web app configuration
 const firebaseConfig = {
@@ -18,12 +17,10 @@ const firebaseConfig = {
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication with AsyncStorage persistence
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
+// Initialize Firebase Authentication
+export const auth = getAuth(app);
 
 // Initialize Cloud Firestore
 export const db = getFirestore(app);
 
-console.log('Firebase Client SDK Initialized with AsyncStorage Persistence!');
+console.log('Firebase Client SDK Initialized!');
