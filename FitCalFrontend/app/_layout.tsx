@@ -1,28 +1,27 @@
-// FitzFrontend/app/_layout.tsx
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, createContext } from 'react'; // Added createContext for explicit import
 import { SplashScreen, Stack, useRouter, useSegments, Slot } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from '../firebaseConfig'; // Ensure this uses persistence as per fix above
 import { Colors } from '../constants/Colours';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, StyleSheet } from 'react-native'; // Added StyleSheet
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreen.preventAutoHideAsync();
 
 interface AuthState {
-  targetWeight: number | null; 
-  currentWeight: number | null; 
+  targetWeight: number | null;
+  currentWeight: number | null;
   displayName: string | null;
   email: string | null;
   photoURL: string;
   user: User | null;
-  isLoading: boolean; 
+  isLoading: boolean;
   hasExistingPlan: boolean;
 }
 
-// Custom hook to provide user state
-const AuthContext = React.createContext<AuthState | undefined>(undefined);
+// Define initial context value with undefined, but the hook will throw an error if not provided
+const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export const useUser = () => {
   const context = useContext(AuthContext);
@@ -39,42 +38,47 @@ export default function RootLayout() {
     displayName: null,
     email: null,
     photoURL: '',
-    targetWeight: null, 
+    targetWeight: null,
     currentWeight: null,
     hasExistingPlan: false,
   });
 
-  // Check if user has an existing plan
   const checkForExistingPlan = async (userId: string) => {
     try {
       const storedPlan = await AsyncStorage.getItem('lastGeneratedDietPlan');
-      // You could also check if the plan belongs to this user by storing userId with the plan
-      setAuthState(prev => ({ ...prev, hasExistingPlan: !!storedPlan }));
-      return !!storedPlan;
+      const hasPlan = !!storedPlan; // Convert to boolean
+      console.log('🔍 Plan check for user', userId, 'has plan:', hasPlan);
+      return hasPlan;
     } catch (error) {
       console.error('Error checking for existing plan:', error);
+      // Decide how to handle this error. Returning false might be safe default.
       return false;
     }
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('🔥 Firebase Auth State Changed:', firebaseUser ? `User ${firebaseUser.uid} logged in` : 'User logged out');
+
       if (firebaseUser) {
-        // User is signed in
+        // Fetch additional user data or plan status here if needed from Firestore/Realtime DB
+        // For now, only checking AsyncStorage for the plan
         const hasPlan = await checkForExistingPlan(firebaseUser.uid);
-        
-        setAuthState({ 
+
+        console.log('🎯 Setting auth state: user logged in, has plan:', hasPlan);
+
+        setAuthState({
           user: firebaseUser,
           isLoading: false,
           displayName: firebaseUser.displayName ?? null,
           email: firebaseUser.email ?? null,
           photoURL: firebaseUser.photoURL ?? '',
-          targetWeight: null, // You might want to fetch this from your backend
-          currentWeight: null, // You might want to fetch this from your backend
+          targetWeight: null, // Populate these from user profile data if available
+          currentWeight: null, // Populate these from user profile data if available
           hasExistingPlan: hasPlan,
         });
       } else {
-        // User is signed out
+        console.log('🎯 Setting auth state: no user');
         setAuthState({
           user: null,
           isLoading: false,
@@ -83,82 +87,86 @@ export default function RootLayout() {
           photoURL: '',
           targetWeight: null,
           currentWeight: null,
-          hasExistingPlan: false,
+          hasExistingPlan: false, // No user, no existing plan
         });
       }
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync(); // Hide splash screen once auth state is determined
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe(); // Cleanup subscription
+  }, []); // Empty dependency array means this runs once on mount
 
   if (authState.isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.accent} />
       </View>
     );
   }
 
-  // Define a temporary component to hold the conditional navigation
-  const ConditionalRootNavigator = () => {
+  const RootLayoutNav = () => {
     const segments = useSegments();
     const router = useRouter();
-    const { user, hasExistingPlan } = useUser(); // Get user and plan status from context
+    const { user, hasExistingPlan } = authState; // Destructure directly from authState
 
     useEffect(() => {
-      const inAuthGroup = segments[0] === 'auth';
-      const inTabsGroup = segments[0] === '(tabs)';
-      const onWorkoutsScreen = segments[1] === 'workouts';
-      const s1 = segments[1] as string | undefined;
-      const onHomeScreen = s1 === 'home' || s1 === 'index';
+      const inAuthGroup = segments[0] === '(auth)';
+      // const inTabsGroup = segments[0] === '(tabs)'; // Not strictly needed for the current logic
+      // const currentTab = segments[1]; // Not strictly needed for the current logic
 
-      console.log('Auth State:', { 
-        user: !!user, 
-        hasExistingPlan, 
-        segments, 
-        inAuthGroup, 
-        inTabsGroup,
-        onWorkoutsScreen 
+      console.log('🔄 Routing Check:', {
+        user: !!user,
+        hasExistingPlan,
+        inAuthGroup,
+        segments: segments.join('/')
       });
 
-      if (!user && !inAuthGroup) {
-        // User is not logged in AND not currently in the /auth group, redirect to login
-        console.log('Redirecting to login - no user');
-        router.replace('/auth/login');
-      } else if (user && !inTabsGroup && !inAuthGroup) {
-        // User is logged in AND not currently in tabs or auth groups
-        
-        if (!hasExistingPlan) {
-          // User has no existing plan - redirect to workouts to create one
-          console.log('Redirecting to workouts - no existing plan');
-          router.replace('/(tabs)/workouts' as any);
-        } else {
-          // User has an existing plan - redirect to home dashboard
-          console.log('Redirecting to home - has existing plan');
-          router.replace('/(tabs)/home' as any);
+      if (!user) {
+        // User not signed in - redirect to login if not already there
+        if (!inAuthGroup) {
+          console.log('🚀 Redirecting to login - no user');
+          router.replace('/(auth)/login');
         }
+      } else {
+        // User IS signed in
+        if (inAuthGroup) {
+          // User signed in but on an auth page - redirect based on plan status
+          if (hasExistingPlan) {
+            console.log('🚀 Redirecting to home - user has existing plan');
+            router.replace('/(tabs)/home');
+          } else {
+            console.log('🚀 Redirecting to workouts - user needs to create plan');
+            router.replace('/(tabs)/workouts');
+          }
+        }
+        // If user is already in the (tabs) group, we do nothing and let them navigate freely within tabs.
+        // This implicitly allows access to other tabs like '/(tabs)/workouts' if they came from '/(auth)'.
       }
-      // If user is logged in and in tabs, or not logged in and in auth, do nothing (stay put).
-    }, [user, hasExistingPlan, segments, router]);
+    }, [user, hasExistingPlan, segments]); // Removed `router` as a dependency; it's stable.
 
     return (
+      // Stack navigator for handling screen transitions
       <Stack screenOptions={{ headerShown: false }}>
-        {/*
-          The Slot will automatically render the correct route based on the URL.
-        */}
-        <Slot />
-        {/* Other common screens like a modal could go here, accessible from both groups */}
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Slot /> {/* This renders the current route */}
       </Stack>
     );
   };
 
   return (
+    // Provide the auth state to the entire app
     <AuthContext.Provider value={authState}>
       <SafeAreaProvider>
-        <ConditionalRootNavigator />
+        <RootLayoutNav />
       </SafeAreaProvider>
     </AuthContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+  },
+});

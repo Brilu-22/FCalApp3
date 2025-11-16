@@ -1,9 +1,9 @@
-// FITZ_FRONT/firebaseConfig.ts
-import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+// FitzFrontend/firebaseConfig.ts - SIMPLE WORKING VERSION
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Your Firebase web app configuration (from Firebase Console Step 1)
+// Your Firebase web app configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB5wj6es6Ac7z_hqgwEEFenGaoRgvbEoIY",
   authDomain: "calorie-app-c04e7.firebaseapp.com",
@@ -15,14 +15,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app: FirebaseApp = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth: Auth = getAuth(app);
+// Initialize Firebase Authentication (SIMPLE - no persistence)
+export const auth = getAuth(app);
 
-// Initialize Cloud Firestore and get a reference to the service
-export const db: Firestore = getFirestore(app);
+// Initialize Cloud Firestore
+export const db = getFirestore(app);
 
 console.log('Firebase Client SDK Initialized!');
-
-

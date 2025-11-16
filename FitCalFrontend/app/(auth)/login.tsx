@@ -26,7 +26,7 @@ export default function LoginScreen() {
       await signInWithEmailAndPassword(auth, email, password);
       // Firebase auth state listener in _layout.tsx will handle navigation for persistent login
       Alert.alert('Success', 'Logged in successfully!');
-      router.replace('/(tabs)'); // Redirect to home tabs after successful login
+      router.replace('/(tabs)/home'); // Redirect to home tabs after successful login
     } catch (error: any) {
       console.error("Login error:", error);
       Alert.alert('Login Failed', error.message);
@@ -72,7 +72,7 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
+        <TouchableOpacity onPress={() => router.replace('/(auth)/signup')}>
           <Text style={styles.switchText}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
       </View>
