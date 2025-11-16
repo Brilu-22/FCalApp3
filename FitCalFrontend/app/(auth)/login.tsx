@@ -6,6 +6,11 @@ import { auth } from '../../firebaseConfig'; // Import Firebase auth
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { router } from 'expo-router'; // For navigation
 
+
+
+// Example usage of signInWithEmailAndPassword is handled inside the component's handleLogin function.
+// Do not use await or undefined variables at the top level in this module.
+
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -67,7 +72,7 @@ export default function LoginScreen() {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.replace('/auth/signup'as any)}>
+        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
           <Text style={styles.switchText}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
       </View>

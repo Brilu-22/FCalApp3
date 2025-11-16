@@ -1,76 +1,66 @@
-// FitzFrontend/app/(tabs)/_layout.tsx
-import React from 'react';
+// app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
 import { Colors } from '../../constants/Colours';
-import { StatusBar } from 'expo-status-bar';
 
 export default function TabLayout() {
   return (
-    <>
-      <StatusBar style="light" backgroundColor={Colors.background} />
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors.orange,
-          tabBarInactiveTintColor: Colors.secondaryText,
-          tabBarStyle: {
-            backgroundColor: Colors.card,
-            borderTopColor: Colors.border,
-            height: Platform.OS === 'ios' ? 90 : 70,
-            paddingBottom: Platform.OS === 'ios' ? 20 : 0,
-            paddingTop: 10,
-          },
-          headerShown: false,
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors.terraCotta,
+        tabBarInactiveTintColor: Colors.secondaryText,
+        tabBarStyle: {
+          backgroundColor: Colors.background,
+          borderTopColor: Colors.border,
+        },
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="workouts"
-          options={{
-            title: 'Workouts',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'barbell' : 'barbell-outline'} size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="dietary-plan"
-          options={{
-            title: 'Meals',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="playlist" // New tab for playlists
-          options={{
-            title: 'Music',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'musical-notes' : 'musical-notes-outline'} size={24} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: 'Profile',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
-            ),
-          }}
-        />
-
-      </Tabs>
-    </>
+      />
+      <Tabs.Screen
+        name="workouts"
+        options={{
+          title: 'Workouts',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="barbell-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="dietary-plan"
+        options={{
+          title: 'Nutrition',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="restaurant-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="full-plan"
+        options={{
+          title: 'Full Plan',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="document-text-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
