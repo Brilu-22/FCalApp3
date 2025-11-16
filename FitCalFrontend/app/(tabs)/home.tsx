@@ -1,4 +1,4 @@
-// app/(tabs)/home.tsx - CORRECTED VERSION
+// app/(tabs)/home.tsx - COMPLETE FIXED VERSION
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { Colors } from '../../constants/Colours';
@@ -14,7 +14,7 @@ interface PlanData {
   text: string;
   params: any;
   generatedAt: string;
-  parsedPlan?: any[]; // Make this optional since it might not exist
+  parsedPlan?: any[];
 }
 
 export default function HomeScreen() {
@@ -37,28 +37,32 @@ export default function HomeScreen() {
 
   const loadCurrentPlan = async () => {
     try {
+      console.log('🏠 Home screen - Loading current plan...');
       const storedPlan = await AsyncStorage.getItem('lastGeneratedDietPlan');
-      console.log('Stored plan:', storedPlan);
+      console.log('🏠 Stored plan found:', !!storedPlan);
       
       if (storedPlan) {
         const planData: PlanData = JSON.parse(storedPlan);
+        console.log('🏠 Plan data loaded:', planData);
         setCurrentPlan(planData);
         
         // Parse today's content from the raw AI text
         parseTodaysContent(planData.text, planData.params?.daysPerWeek || 5);
+      } else {
+        console.log('🏠 No stored plan found');
       }
     } catch (error) {
-      console.error('Error loading plan:', error);
+      console.error('🏠 Error loading plan:', error);
     }
   };
 
   const parseTodaysContent = (aiText: string, totalDays: number) => {
     try {
       const today = new Date().getDay();
-      const dayIndex = today === 0 ? totalDays - 1 : today - 1; // Sunday = last day, Monday = day 0
-      const currentDay = Math.min(dayIndex, totalDays - 1) + 1; // Day number (1-based)
+      const dayIndex = today === 0 ? totalDays - 1 : today - 1;
+      const currentDay = Math.min(dayIndex, totalDays - 1) + 1;
 
-      console.log(`Parsing content for day ${currentDay} of ${totalDays}`);
+      console.log(`🏠 Parsing content for day ${currentDay} of ${totalDays}`);
 
       // Look for the specific day in the AI response
       const dayPattern = new RegExp(`Day ${currentDay}:([\\s\\S]*?)(?=Day ${currentDay + 1}:|$)`, 'i');
@@ -68,7 +72,7 @@ export default function HomeScreen() {
         const dayContent = dayMatch[1];
         
         // Extract workout
-        const workoutMatch = dayContent.match(/WORKOUT:([\s\S]*?)(?=MEALS:|$)/i);
+        const workoutMatch = dayContent.match(/WORKOUT:([\s\\S]*?)(?=MEALS:|$)/i);
         if (workoutMatch) {
           setTodayWorkout(workoutMatch[1].trim());
         } else {
@@ -99,7 +103,7 @@ export default function HomeScreen() {
         }
       }
     } catch (error) {
-      console.error('Error parsing today\'s content:', error);
+      console.error('🏠 Error parsing today\'s content:', error);
       setTodayWorkout('Workout details available in full plan');
       setTodayMeals('Meal details available in full plan');
     }
@@ -115,7 +119,8 @@ export default function HomeScreen() {
     return 'Good Evening';
   };
 
-  if (!currentPlan) {
+  // Show loading state while checking for plan
+  if (currentPlan === null && !user?.hasExistingPlan) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -148,6 +153,7 @@ export default function HomeScreen() {
     );
   }
 
+  // Show actual plan content
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -164,7 +170,7 @@ export default function HomeScreen() {
           <View style={styles.dateTimeContainer}>
             <Text style={styles.dateText}>{currentDate}</Text>
             <Text style={styles.dayHighlight}>
-              {currentPlan.params?.daysPerWeek ? `${currentPlan.params.daysPerWeek}-Day Plan` : 'Your Plan'}
+              {currentPlan?.params?.daysPerWeek ? `${currentPlan.params.daysPerWeek}-Day Plan` : 'Your Plan'}
             </Text>
           </View>
         </View>
@@ -212,21 +218,21 @@ export default function HomeScreen() {
             <View style={styles.progressItem}>
               <Ionicons name="calendar" size={24} color={Colors.salmon} />
               <Text style={styles.progressNumber}>
-                {currentPlan.params?.daysPerWeek || '5'}
+                {currentPlan?.params?.daysPerWeek || '5'}
               </Text>
               <Text style={styles.progressLabel}>Day Plan</Text>
             </View>
             <View style={styles.progressItem}>
               <Ionicons name="time" size={24} color={Colors.terraCotta} />
               <Text style={styles.progressNumber}>
-                {currentPlan.params?.workoutDurationMinutes || '45'}
+                {currentPlan?.params?.workoutDurationMinutes || '45'}
               </Text>
               <Text style={styles.progressLabel}>Minutes</Text>
             </View>
             <View style={styles.progressItem}>
               <Ionicons name="trending-up" size={24} color={Colors.orange} />
               <Text style={styles.progressNumber}>
-                {currentPlan.params?.targetWeightKg || '0'}kg
+                {currentPlan?.params?.targetWeightKg || '0'}kg
               </Text>
               <Text style={styles.progressLabel}>Goal Weight</Text>
             </View>

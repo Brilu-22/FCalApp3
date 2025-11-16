@@ -1,4 +1,4 @@
-// app/(tabs)/workouts.tsx - FIXED VERSION
+// app/(tabs)/workouts.tsx - COMPLETE FIXED VERSION
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator, TextInput, Platform } from 'react-native';
 import { Colors } from '../../constants/Colours';
@@ -8,10 +8,8 @@ import { router } from 'expo-router';
 import { useUser } from '../_layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Storage } from '../../lib/Storage';
-
 // Simple API URL configuration
-const API_BASE_URL = Platform.OS === 'android' 
+const API_BASE_URL = Platform.OS === 'ios' 
   ? 'http://10.0.2.2:5089/api'
   : 'http://localhost:5089/api';
 
@@ -44,7 +42,10 @@ export default function WorkoutsScreen() {
   }, [user]);
 
   const generateAiPlan = async () => {
+    console.log('🟡 Generate button clicked');
+    
     if (!currentWeight || !targetWeight || !workoutDuration || !daysPerWeek) {
+      console.log('❌ Missing fields:', { currentWeight, targetWeight, workoutDuration, daysPerWeek });
       Alert.alert('Missing Info', 'Please fill in all required fields.');
       return;
     }
@@ -62,7 +63,9 @@ export default function WorkoutsScreen() {
       return;
     }
 
+    console.log('🟡 All fields filled, starting generation...');
     setGeneratingPlan(true);
+    
     try {
       const requestBody = {
         currentWeightKg: currentWeightKg,
@@ -73,9 +76,12 @@ export default function WorkoutsScreen() {
         dietaryPreference: dietaryPreference,
       };
 
-      const apiUrl = `${API_BASE_URL}/generate_ai_plan`;
-      console.log('🚀 Generating AI plan...', requestBody);
+      console.log('🟡 Request body:', requestBody);
       
+      const apiUrl = `${API_BASE_URL}/generate_ai_plan`;
+      console.log('🟡 API URL:', apiUrl);
+      
+      console.log('🟡 Making fetch request...');
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -84,31 +90,44 @@ export default function WorkoutsScreen() {
         body: JSON.stringify(requestBody),
       });
 
+      console.log('🟡 Response status:', response.status);
+      console.log('🟡 Response ok:', response.ok);
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Backend error:', errorText);
-        Alert.alert('Error', 'Failed to generate plan. Please try again.');
+        
+        if (response.status === 403) {
+          Alert.alert('API Error', 'Backend service is not properly configured. Please check API keys.');
+        } else if (response.status === 500) {
+          Alert.alert('Server Error', 'Internal server error. Please try again later.');
+        } else if (response.status === 503) {
+          Alert.alert('Service Unavailable', 'AI service is temporarily unavailable. Please wait a moment and try again.');
+        } else {
+          Alert.alert('Error', `Server error: ${response.status} - ${errorText}`);
+        }
         return;
       }
 
       const data = await response.json();
-      const aiResponseText = data.aiResponse;
+      console.log('✅ AI Response received:', data);
 
-      if (aiResponseText) {
+      if (data.aiResponse) {
         console.log('✅ AI plan generated successfully!');
         
-        // Store the complete plan
         const planData = {
-          text: aiResponseText,
+          text: data.aiResponse,
           params: requestBody,
           generatedAt: new Date().toISOString()
         };
 
+        // Save the plan
         await AsyncStorage.setItem('lastGeneratedDietPlan', JSON.stringify(planData));
+        console.log('💾 Plan saved to storage');
         
-        console.log('💾 Plan saved to storage, redirecting to dashboard...');
+        // Force refresh by navigating directly
+        console.log('🔄 Forcing navigation to home...');
         
-        // Show success message and redirect
         Alert.alert(
           'Success!', 
           'Your personalized fitness plan has been generated!',
@@ -117,35 +136,23 @@ export default function WorkoutsScreen() {
               text: 'View My Plan',
               onPress: () => {
                 console.log('🎯 Navigating to home dashboard');
+                // Use replace to force a fresh load
                 router.replace('/(tabs)/home');
               }
             }
           ]
         );
-        
       } else {
+        console.log('❌ No aiResponse in data:', data);
         Alert.alert('Error', 'No plan was generated. Please try again.');
       }
 
     } catch (error: any) {
-      console.error('❌ Error generating plan:', error);
-      Alert.alert('Connection Error', 'Failed to connect to the server. Please check your connection and try again.');
+      console.error('❌ Fetch error:', error);
+      Alert.alert('Connection Error', `Failed to connect to the server: ${error.message}`);
     } finally {
       setGeneratingPlan(false);
     }
-  };
-
-  // Simple parser for AI response
-  const parseAiPlan = (aiText: string, numDays: number) => {
-    const days = [];
-    for (let i = 0; i < numDays; i++) {
-      days.push({
-        day: i + 1,
-        workout: 'Workout details available in full plan',
-        meals: 'Meal details available in full plan'
-      });
-    }
-    return days;
   };
 
   return (
@@ -275,7 +282,6 @@ export default function WorkoutsScreen() {
   );
 }
 
-// Keep all your existing styles...
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
