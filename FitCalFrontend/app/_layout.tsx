@@ -6,9 +6,9 @@ import { auth } from '../firebaseConfig';
 import { Colors } from '../constants/Colours';
 import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreen.preventAutoHideAsync();
-
 
 interface AuthState {
   targetWeight: number | null; 
@@ -18,6 +18,7 @@ interface AuthState {
   photoURL: string;
   user: User | null;
   isLoading: boolean; 
+  hasExistingPlan: boolean;
 }
 
 // Custom hook to provide user state
@@ -40,19 +41,51 @@ export default function RootLayout() {
     photoURL: '',
     targetWeight: null, 
     currentWeight: null,
+    hasExistingPlan: false,
   });
 
+  // Check if user has an existing plan
+  const checkForExistingPlan = async (userId: string) => {
+    try {
+      const storedPlan = await AsyncStorage.getItem('lastGeneratedDietPlan');
+      // You could also check if the plan belongs to this user by storing userId with the plan
+      setAuthState(prev => ({ ...prev, hasExistingPlan: !!storedPlan }));
+      return !!storedPlan;
+    } catch (error) {
+      console.error('Error checking for existing plan:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setAuthState((prevState) => ({ 
-        ...prevState, // Keep existing targetWeight and currentWeight unless updated here
-        user: firebaseUser,
-        isLoading: false,
-        displayName: firebaseUser?.displayName ?? null,
-        email: firebaseUser?.email ?? null,
-        photoURL: firebaseUser?.photoURL ?? '',
-       
-      }));
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // User is signed in
+        const hasPlan = await checkForExistingPlan(firebaseUser.uid);
+        
+        setAuthState({ 
+          user: firebaseUser,
+          isLoading: false,
+          displayName: firebaseUser.displayName ?? null,
+          email: firebaseUser.email ?? null,
+          photoURL: firebaseUser.photoURL ?? '',
+          targetWeight: null, // You might want to fetch this from your backend
+          currentWeight: null, // You might want to fetch this from your backend
+          hasExistingPlan: hasPlan,
+        });
+      } else {
+        // User is signed out
+        setAuthState({
+          user: null,
+          isLoading: false,
+          displayName: null,
+          email: null,
+          photoURL: '',
+          targetWeight: null,
+          currentWeight: null,
+          hasExistingPlan: false,
+        });
+      }
       SplashScreen.hideAsync();
     });
 
@@ -71,21 +104,43 @@ export default function RootLayout() {
   const ConditionalRootNavigator = () => {
     const segments = useSegments();
     const router = useRouter();
-    const { user } = useUser(); // Get user from context
+    const { user, hasExistingPlan } = useUser(); // Get user and plan status from context
 
     useEffect(() => {
-      const inAuthGroup = String(segments[0]) === 'auth';
+      const inAuthGroup = segments[0] === 'auth';
       const inTabsGroup = segments[0] === '(tabs)';
+      const onWorkoutsScreen = segments[1] === 'workouts';
+      const s1 = segments[1] as string | undefined;
+      const onHomeScreen = s1 === 'home' || s1 === 'index';
+
+      console.log('Auth State:', { 
+        user: !!user, 
+        hasExistingPlan, 
+        segments, 
+        inAuthGroup, 
+        inTabsGroup,
+        onWorkoutsScreen 
+      });
 
       if (!user && !inAuthGroup) {
         // User is not logged in AND not currently in the /auth group, redirect to login
-        router.replace('./auth/login');
-      } else if (user && !inTabsGroup) {
-        // User is logged in AND not currently in the /(tabs) group, redirect to home
-        router.replace('/(tabs)');
+        console.log('Redirecting to login - no user');
+        router.replace('/auth/login');
+      } else if (user && !inTabsGroup && !inAuthGroup) {
+        // User is logged in AND not currently in tabs or auth groups
+        
+        if (!hasExistingPlan) {
+          // User has no existing plan - redirect to workouts to create one
+          console.log('Redirecting to workouts - no existing plan');
+          router.replace('/(tabs)/workouts' as any);
+        } else {
+          // User has an existing plan - redirect to home dashboard
+          console.log('Redirecting to home - has existing plan');
+          router.replace('/(tabs)/home' as any);
+        }
       }
       // If user is logged in and in tabs, or not logged in and in auth, do nothing (stay put).
-    }, [user, segments, router]);
+    }, [user, hasExistingPlan, segments, router]);
 
     return (
       <Stack screenOptions={{ headerShown: false }}>
