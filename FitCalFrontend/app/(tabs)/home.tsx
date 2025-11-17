@@ -14,7 +14,6 @@ interface PlanData {
   text: string;
   params: any;
   generatedAt: string;
-  parsedPlan?: any[];
 }
 
 export default function HomeScreen() {
@@ -65,11 +64,11 @@ export default function HomeScreen() {
       console.log(`🏠 Parsing content for day ${currentDay} of ${totalDays}`);
 
       // Look for the specific day in the AI response
-      const dayPattern = new RegExp(`Day ${currentDay}:([\\s\\S]*?)(?=Day ${currentDay + 1}:|$)`, 'i');
+      const dayPattern = new RegExp(`DAY ${currentDay}:([\\s\\S]*?)(?=DAY ${currentDay + 1}:|$)`, 'i');
       const dayMatch = aiText.match(dayPattern);
 
       if (dayMatch) {
-        const dayContent = dayMatch[1];
+        const dayContent = dayMatch[0]; // Use the full match
         
         // Extract workout
         const workoutMatch = dayContent.match(/WORKOUT:([\s\\S]*?)(?=MEALS:|$)/i);
@@ -80,26 +79,26 @@ export default function HomeScreen() {
         }
 
         // Extract meals
-        const mealsMatch = dayContent.match(/MEALS:([\s\\S]*?)(?=Day |$)/i);
+        const mealsMatch = dayContent.match(/MEALS:([\s\\S]*?)(?=DAY |$)/i);
         if (mealsMatch) {
           setTodayMeals(mealsMatch[1].trim());
         } else {
           setTodayMeals('Balanced meals focusing on protein and complex carbohydrates');
         }
       } else {
-        // Fallback: Use first day's content or generic content
-        const firstDayMatch = aiText.match(/Day 1:([\s\\S]*?)(?=Day 2:|$)/i);
+        // Fallback to first day
+        const firstDayMatch = aiText.match(/DAY 1:([\\s\\S]*?)(?=DAY 2:|$)/i);
         if (firstDayMatch) {
-          const firstDayContent = firstDayMatch[1];
+          const firstDayContent = firstDayMatch[0];
           const workoutMatch = firstDayContent.match(/WORKOUT:([\s\\S]*?)(?=MEALS:|$)/i);
-          const mealsMatch = firstDayContent.match(/MEALS:([\s\\S]*?)(?=Day |$)/i);
+          const mealsMatch = firstDayContent.match(/MEALS:([\s\\S]*?)(?=DAY |$)/i);
           
           setTodayWorkout(workoutMatch ? workoutMatch[1].trim() : 'Check full plan for workout details');
           setTodayMeals(mealsMatch ? mealsMatch[1].trim() : 'Check full plan for meal details');
         } else {
           // Generic content if parsing fails
-          setTodayWorkout('Full body strength training - 3 sets of 10-12 reps for major muscle groups');
-          setTodayMeals('High-protein breakfast, balanced lunch with lean protein and veggies, light dinner with complex carbs');
+          setTodayWorkout('Workout details available in full plan');
+          setTodayMeals('Meal details available in full plan');
         }
       }
     } catch (error) {
@@ -186,7 +185,7 @@ export default function HomeScreen() {
           </Text>
           <TouchableOpacity 
             style={styles.viewDetailsButton}
-            onPress={() => router.push('/(tabs)/full-plan')}
+            onPress={() => router.push('/full-plan')}
           >
             <Text style={styles.viewDetailsText}>View Full Workout Plan</Text>
             <Ionicons name="chevron-forward" size={16} color={Colors.terraCotta} />
@@ -204,7 +203,7 @@ export default function HomeScreen() {
           </Text>
           <TouchableOpacity 
             style={styles.viewDetailsButton}
-            onPress={() => router.push('/(tabs)/full-plan')}
+            onPress={() => router.push('/full-plan')}
           >
             <Text style={styles.viewDetailsText}>View Full Meal Plan</Text>
             <Ionicons name="chevron-forward" size={16} color={Colors.orange} />
@@ -253,7 +252,7 @@ export default function HomeScreen() {
 
             <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/(tabs)/full-plan')}
+              onPress={() => router.push('/full-plan')}
             >
               <Ionicons name="document-text" size={24} color={Colors.orange} />
               <Text style={styles.actionText}>Full Plan</Text>

@@ -107,10 +107,19 @@ DAYS PER WEEK: {preferences.DaysPerWeek}
 FITNESS LEVEL: {preferences.FitnessLevel}
 DIETARY PREFERENCE: {preferences.DietaryPreference}
 
-Structure each day as:
+IMPORTANT: For each day, provide SPECIFIC WORKOUT exercises with sets, reps, and rest periods.
+
+Structure each day EXACTLY like this:
 DAY [Number]:
-WORKOUT: [Detailed workout with exercises, sets, reps, and rest periods]
+WORKOUT: [Specific exercises with sets/reps - e.g., Barbell Squats: 3 sets of 8-12 reps, 60s rest; Bench Press: 3 sets of 8-12 reps, 60s rest]
 MEALS: [Breakfast, lunch, dinner, and snacks with specific food suggestions]
+
+WORKOUT REQUIREMENTS:
+- Include specific exercises with sets, reps, and rest periods
+- Focus on compound movements for {preferences.FitnessLevel} level
+- Target different muscle groups each day
+- Include warm-up and cool-down instructions
+- Make workouts practical for {preferences.WorkoutDurationMinutes} minutes
 
 Make it practical, safe, and achievable for a {preferences.FitnessLevel} level.
 Focus on helping achieve the weight goal from {preferences.CurrentWeightKg}kg to {preferences.TargetWeightKg}kg.
@@ -141,11 +150,11 @@ Each workout is approximately {preferences.WorkoutDurationMinutes} minutes and t
 {string.Join("\n", days)}
 
 IMPORTANT NOTES:
+- Warm up for 5-10 minutes before each workout
+- Cool down and stretch after each session  
 - Stay hydrated throughout the day
 - Listen to your body and rest when needed
-- Warm up for 5-10 minutes before each workout
-- Cool down and stretch after each session
-- Adjust portion sizes based on your hunger and energy levels
+- Adjust weights based on your strength level
 - Consult with a healthcare professional before starting any new fitness program
 
 Remember: Consistency is key! Stick to the plan and track your progress weekly.";
@@ -157,27 +166,27 @@ Remember: Consistency is key! Stick to the plan and track your progress weekly."
         {
             ["beginner"] = new[]
             {
-                $"Full Body Circuit ({duration} min): Bodyweight squats (3x12), Push-ups (3x8), Plank (3x30s), Walking lunges (3x10), Rest 60s between sets",
-                $"Cardio Focus ({duration} min): 25 min brisk walk or jog, Light stretching, Core exercises (3x15 crunches, 3x20s plank), Cool down walk",
-                $"Upper Body Strength ({duration} min): Wall push-ups (3x12), Dumbbell rows (3x10), Shoulder press (3x10), Bicep curls (3x12), Tricep extensions (3x12)",
-                $"Lower Body & Core ({duration} min): Bodyweight squats (3x15), Glute bridges (3x12), Calf raises (3x15), Leg raises (3x10), Bird-dog (3x10 each side)",
-                $"Active Recovery ({duration} min): 20 min yoga flow, Full body stretching, Focus on breathing and mobility, Light core activation"
+                $"Full Body Circuit ({duration} min): Warm-up: 5 min light cardio. Barbell Squats: 3 sets of 10-12 reps, 60s rest. Bench Press: 3 sets of 10-12 reps, 60s rest. Bent-over Rows: 3 sets of 10-12 reps, 60s rest. Shoulder Press: 3 sets of 10-12 reps, 60s rest. Plank: 3 sets of 30s, 30s rest. Cool-down: 5 min stretching.",
+                $"Cardio & Core ({duration} min): Warm-up: 5 min brisk walk. Treadmill: 20 min interval training (1 min run/2 min walk). Russian Twists: 3 sets of 15 reps, 30s rest. Leg Raises: 3 sets of 12 reps, 30s rest. Mountain Climbers: 3 sets of 20 reps, 30s rest. Cool-down: 5 min walking and stretching.",
+                $"Upper Body Strength ({duration} min): Warm-up: 5 min arm circles and light weights. Dumbbell Press: 3 sets of 10-12 reps, 60s rest. Lat Pulldowns: 3 sets of 10-12 reps, 60s rest. Bicep Curls: 3 sets of 12-15 reps, 45s rest. Tricep Extensions: 3 sets of 12-15 reps, 45s rest. Push-ups: 3 sets to failure, 60s rest. Cool-down: 5 min stretching.",
+                $"Lower Body Focus ({duration} min): Warm-up: 5 min dynamic stretching. Goblet Squats: 3 sets of 12-15 reps, 60s rest. Lunges: 3 sets of 10 reps per leg, 60s rest. Leg Press: 3 sets of 12-15 reps, 60s rest. Calf Raises: 3 sets of 15-20 reps, 45s rest. Glute Bridges: 3 sets of 15 reps, 45s rest. Cool-down: 5 min stretching.",
+                $"Active Recovery ({duration} min): Yoga flow: 25 min full body sequence. Core work: Bird-dog 3 sets of 10 reps per side, Dead Bug 3 sets of 12 reps. Light cardio: 10 min stationary bike. Full body stretching: 10 min focused on flexibility."
             },
             ["intermediate"] = new[]
             {
-                $"Strength Training ({duration} min): Barbell squats (4x8), Bench press (4x8), Bent-over rows (4x8), Plank (3x45s), Rest 90s between sets",
-                $"HIIT Cardio ({duration} min): Warm up 5 min, Intervals: 1 min sprint/2 min walk (8 rounds), Burpees (4x10), Mountain climbers (4x20)",
-                $"Push Day ({duration} min): Bench press (4x8), Shoulder press (4x10), Incline press (4x10), Tricep dips (4x12), Push-ups (4x15)",
-                $"Pull Day ({duration} min): Pull-ups (4x6), Barbell rows (4x8), Lat pulldowns (4x10), Face pulls (4x12), Bicep curls (4x10)",
-                $"Leg Day ({duration} min): Squats (4x8), Deadlifts (4x6), Lunges (4x10), Leg press (4x12), Calf raises (4x15)"
+                $"Chest & Triceps ({duration} min): Warm-up: 5 min. Barbell Bench Press: 4 sets of 8-12 reps, 90s rest. Incline Dumbbell Press: 3 sets of 8-12 reps, 75s rest. Cable Flyes: 3 sets of 12-15 reps, 60s rest. Tricep Dips: 3 sets of 10-15 reps, 60s rest. Skull Crushers: 3 sets of 10-12 reps, 60s rest. Push-ups: 3 sets to failure. Cool-down: 5 min.",
+                $"Back & Biceps ({duration} min): Warm-up: 5 min. Deadlifts: 4 sets of 6-8 reps, 120s rest. Pull-ups: 3 sets of 6-10 reps, 90s rest. Barbell Rows: 3 sets of 8-12 reps, 75s rest. Lat Pulldowns: 3 sets of 10-12 reps, 60s rest. Barbell Curls: 3 sets of 8-12 reps, 60s rest. Hammer Curls: 3 sets of 10-12 reps, 60s rest. Cool-down: 5 min.",
+                $"Leg Day ({duration} min): Warm-up: 5 min dynamic stretches. Barbell Squats: 4 sets of 8-12 reps, 120s rest. Romanian Deadlifts: 3 sets of 8-12 reps, 90s rest. Leg Press: 3 sets of 10-15 reps, 75s rest. Leg Extensions: 3 sets of 12-15 reps, 60s rest. Leg Curls: 3 sets of 12-15 reps, 60s rest. Calf Raises: 4 sets of 15-20 reps, 45s rest. Cool-down: 5 min.",
+                $"Shoulders & Abs ({duration} min): Warm-up: 5 min. Military Press: 4 sets of 8-12 reps, 90s rest. Lateral Raises: 3 sets of 12-15 reps, 60s rest. Front Raises: 3 sets of 12-15 reps, 60s rest. Cable Crunches: 3 sets of 15-20 reps, 45s rest. Hanging Leg Raises: 3 sets of 10-15 reps, 60s rest. Plank: 3 sets of 60s. Cool-down: 5 min.",
+                $"Full Body HIIT ({duration} min): Warm-up: 5 min. Circuit (4 rounds): Kettlebell Swings x15, Box Jumps x10, Burpees x10, Mountain Climbers x30, Rest 60s between rounds. Core finisher: Russian Twists x50, Leg Raises x20. Cool-down: 5 min stretching."
             },
             ["advanced"] = new[]
             {
-                $"Power Training ({duration} min): Heavy squats (5x5), Power cleans (5x3), Box jumps (5x5), Sprints (8x100m), Rest 2-3 min between heavy sets",
-                $"Volume Day ({duration} min): Squats (5x10), Bench press (5x10), Rows (5x10), Accessory work (3x15 each exercise), Minimal rest between sets",
-                $"Strength Endurance ({duration} min): Circuit training - Deadlifts (3x12), Push press (3x12), Pull-ups (3x12), Burpees (3x20), Kettlebell swings (3x15)",
-                $"Olympic Focus ({duration} min): Snatch practice (8x2), Clean & jerk (8x2), Front squats (4x6), Push press (4x8), Core stability work",
-                $"Conditioning ({duration} min): AMRAP 20 min - 5 pull-ups, 10 push-ups, 15 air squats, 200m run, then skill work and mobility"
+                $"Power Training ({duration} min): Warm-up: 10 min. Power Cleans: 5 sets of 3 reps, 180s rest. Push Press: 4 sets of 5 reps, 120s rest. Box Jumps: 4 sets of 5 reps, 90s rest. Medicine Ball Slams: 3 sets of 10 reps, 60s rest. Sprints: 8x100m with 90s rest. Cool-down: 10 min.",
+                $"Volume Chest ({duration} min): Warm-up: 5 min. Bench Press: 5 sets of 10 reps, 90s rest. Incline DB Press: 4 sets of 12 reps, 75s rest. Decline Press: 3 sets of 12 reps, 75s rest. Cable Crossovers: 3 sets of 15 reps, 60s rest. Push-ups: 3 sets to failure. Cool-down: 5 min.",
+                $"Back Destruction ({duration} min): Warm-up: 5 min. Deadlifts: 5 sets of 5 reps, 180s rest. Weighted Pull-ups: 4 sets of 6-8 reps, 120s rest. T-bar Rows: 4 sets of 8-10 reps, 90s rest. Single-arm DB Rows: 3 sets of 10-12 reps, 75s rest. Face Pulls: 3 sets of 15 reps, 60s rest. Cool-down: 5 min.",
+                $"Legs Intensity ({duration} min): Warm-up: 10 min. Squats: 5 sets of 5 reps, 180s rest. Front Squats: 4 sets of 6-8 reps, 120s rest. Lunges: 3 sets of 10 reps per leg, 90s rest. Leg Press: 3 sets of 15-20 reps, 75s rest. Calf Raises: 5 sets of 20 reps, 45s rest. Cool-down: 10 min.",
+                $"Conditioning ({duration} min): AMRAP 20 min: 5 Pull-ups, 10 Push-ups, 15 Air Squats, 20 Mountain Climbers. Then: Farmer's Walks 4x50m, Battle Ropes 4x30s. Cool-down: 10 min mobility work."
             }
         };
 

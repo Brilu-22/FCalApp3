@@ -16,8 +16,10 @@ interface PlanData {
     targetWeightKg: number;
     workoutDurationMinutes: number;
     daysPerWeek: number;
-    prompt?: string;
+    fitnessLevel?: string;
+    dietaryPreference?: string;
   };
+  generatedAt: string;
 }
 
 export default function FullPlanScreen() {
@@ -54,33 +56,46 @@ export default function FullPlanScreen() {
     setExpandedDays(newExpanded);
   };
 
-  const cleanText = (text: string) => {
-    // Remove markdown formatting
-    return text
-      .replace(/\*\*/g, '') // Remove bold
-      .replace(/\*/g, '')   // Remove italics
-      .replace(/#{1,6}\s?/g, '') // Remove headers
-      .replace(/`/g, '')    // Remove code blocks
-      .trim();
-  };
-
   const formatPlanContent = () => {
     if (!planData?.text) return null;
 
-    const sections = planData.text.split('---').filter(section => section.trim());
-    const daySections = sections.filter(section => section.includes('Day'));
+    const content = planData.text;
+    
+    // Split by DAY pattern to get individual days
+    const daySections = content.split(/(?=DAY \d+:)/i).filter(section => section.trim() && section.match(/DAY \d+:/i));
+    
+    // If no DAY sections found, try to create them from the content
+    if (daySections.length === 0) {
+      // Fallback: Create a single section with all content
+      return [
+        <Card key={0} style={styles.dayCard}>
+          <View style={styles.dayHeader}>
+            <View style={styles.dayTitleContainer}>
+              <Text style={styles.dayNumber}>Complete Plan</Text>
+              <Text style={styles.dayTitle}>Your Fitness & Nutrition Guide</Text>
+            </View>
+          </View>
+          <View style={styles.dayContent}>
+            <Text style={styles.fullContent}>{content}</Text>
+          </View>
+        </Card>
+      ];
+    }
     
     return daySections.map((section, index) => {
-      const cleanedSection = cleanText(section);
-      const lines = cleanedSection.split('\n').filter(line => line.trim());
       const isExpanded = expandedDays.has(index);
       
-      // Extract day title
-      const dayTitle = lines[0]?.trim() || `Day ${index + 1}`;
+      // Extract day number and title
+      const dayMatch = section.match(/DAY (\d+):/i);
+      const dayNumber = dayMatch ? parseInt(dayMatch[1]) : index + 1;
       
-      // Extract workout and meal sections
-      const workoutSection = cleanedSection.match(/Workout Plan[\s\S]*?(?=Meal Plan|$)/i)?.[0] || '';
-      const mealSection = cleanedSection.match(/Meal Plan[\s\S]*?(?=Workout Plan|$)/i)?.[0] || '';
+      // Extract workout section
+      const workoutMatch = section.match(/WORKOUT:([\s\S]*?)(?=MEALS:|$)/i);
+      const workoutContent = workoutMatch ? workoutMatch[1].trim() : 'Workout details not available';
+      
+      // Extract meals section  
+      const mealsMatch = section.match(/MEALS:([\s\S]*?)(?=DAY \d+:|$)/i);
+      const mealsContent = mealsMatch ? mealsMatch[1].trim() : 'Meal details not available';
 
       return (
         <Card key={index} style={styles.dayCard}>
@@ -90,40 +105,40 @@ export default function FullPlanScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.dayTitleContainer}>
-              <Text style={styles.dayNumber}>Day {index + 1}</Text>
-              <Text style={styles.dayTitle}>{dayTitle.replace('###', '').trim()}</Text>
+              <Text style={styles.dayNumber}>Day {dayNumber}</Text>
+              <Text style={styles.dayTitle}>Daily Plan</Text>
             </View>
             <Ionicons 
               name={isExpanded ? "chevron-up" : "chevron-down"} 
               size={24} 
-              color={Colors.accent} 
+              color={Colors.orange} 
             />
           </TouchableOpacity>
 
           {isExpanded && (
             <View style={styles.dayContent}>
               {/* Workout Section */}
-              {activeTab === 'workout' && workoutSection && (
+              {activeTab === 'workout' && (
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
-                    <Ionicons name="barbell-outline" size={20} color={Colors.accent} />
-                    <Text style={styles.sectionTitle}>Workout Plan</Text>
+                    <Ionicons name="barbell-outline" size={20} color={Colors.terraCotta} />
+                    <Text style={styles.sectionTitle}>Workout</Text>
                   </View>
                   <Text style={styles.sectionContent}>
-                    {workoutSection.replace('Workout Plan', '').trim()}
+                    {workoutContent}
                   </Text>
                 </View>
               )}
 
               {/* Meal Section */}
-              {activeTab === 'diet' && mealSection && (
+              {activeTab === 'diet' && (
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
-                    <Ionicons name="restaurant-outline" size={20} color={Colors.accent} />
-                    <Text style={styles.sectionTitle}>Meal Plan</Text>
+                    <Ionicons name="restaurant-outline" size={20} color={Colors.orange} />
+                    <Text style={styles.sectionTitle}>Meals</Text>
                   </View>
                   <Text style={styles.sectionContent}>
-                    {mealSection.replace('Meal Plan', '').trim()}
+                    {mealsContent}
                   </Text>
                 </View>
               )}
@@ -155,7 +170,7 @@ export default function FullPlanScreen() {
           </Text>
           <TouchableOpacity 
             style={styles.generateButton}
-            onPress={() => router.push('./(tabs)/workouts')}
+            onPress={() => router.push('/(tabs)/workouts')}
           >
             <Text style={styles.generateButtonText}>Generate Plan</Text>
           </TouchableOpacity>
@@ -210,10 +225,10 @@ export default function FullPlanScreen() {
             </View>
           </View>
           
-          {planData.params.prompt && (
-            <View style={styles.promptSection}>
-              <Text style={styles.promptLabel}>Additional Notes</Text>
-              <Text style={styles.promptText}>{planData.params.prompt}</Text>
+          {planData.params.fitnessLevel && (
+            <View style={styles.extraInfo}>
+              <Text style={styles.extraLabel}>Fitness Level: {planData.params.fitnessLevel}</Text>
+              <Text style={styles.extraLabel}>Diet: {planData.params.dietaryPreference || 'Balanced'}</Text>
             </View>
           )}
         </Card>
@@ -228,7 +243,7 @@ export default function FullPlanScreen() {
               <Ionicons 
                 name="barbell-outline" 
                 size={20} 
-                color={activeTab === 'workout' ? Colors.primaryText : Colors.primaryText} 
+                color={activeTab === 'workout' ? Colors.primaryText : Colors.secondaryText} 
               />
               <Text style={[styles.tabText, activeTab === 'workout' && styles.activeTabText]}>
                 Workouts
@@ -241,7 +256,7 @@ export default function FullPlanScreen() {
               <Ionicons 
                 name="nutrition-outline" 
                 size={20} 
-                color={activeTab === 'diet' ? Colors.primaryText : Colors.primaryText} 
+                color={activeTab === 'diet' ? Colors.primaryText : Colors.secondaryText} 
               />
               <Text style={[styles.tabText, activeTab === 'diet' && styles.activeTabText]}>
                 Nutrition
@@ -270,18 +285,18 @@ export default function FullPlanScreen() {
         <View style={styles.actionButtons}>
           <TouchableOpacity 
             style={[styles.actionButton, styles.secondaryButton]}
-            onPress={() => router.push('./(tabs)/workouts')}
+            onPress={() => router.push('/(tabs)/workouts')}
           >
-            <Ionicons name="refresh-outline" size={20} color={Colors.primaryText} />
+            <Ionicons name="refresh-outline" size={20} color={Colors.orange} />
             <Text style={[styles.actionButtonText, styles.secondaryButtonText]}>New Plan</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={[styles.actionButton, styles.primaryButton]}
-            onPress={() => router.push('./(tabs)/dietary-plan')}
+            onPress={() => router.push('/(tabs)/home')}
           >
-            <Ionicons name="restaurant-outline" size={20} color={Colors.primaryText} />
-            <Text style={styles.actionButtonText}>View Meals</Text>
+            <Ionicons name="home-outline" size={20} color={Colors.primaryText} />
+            <Text style={styles.actionButtonText}>Back to Home</Text>
           </TouchableOpacity>
         </View>
 
@@ -290,7 +305,6 @@ export default function FullPlanScreen() {
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -338,7 +352,6 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
     borderRadius: 8,
-
   },
   headerTitle: {
     fontSize: 20,
@@ -387,23 +400,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.primaryText,
   },
-  promptSection: {
+  extraInfo: {
     marginTop: 8,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: Colors.terraCotta, // Updated to use new color
+    borderTopColor: Colors.terraCotta,
   },
-  promptLabel: {
+  extraLabel: {
     fontSize: 14,
-    color: Colors.orange, // Updated to use new color
+    color: Colors.orange,
     fontWeight: '600',
-    marginBottom: 6,
-  },
-  promptText: {
-    fontSize: 14,
-    color: Colors.primaryText,
-    lineHeight: 20,
-    fontStyle: 'italic',
+    marginBottom: 4,
   },
   tabCard: {
     marginHorizontal: 16,
@@ -426,7 +433,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   activeTab: {
-    backgroundColor: Colors.terraCotta, // Updated to use new color
+    backgroundColor: Colors.terraCotta,
   },
   tabText: {
     fontSize: 16,
@@ -442,7 +449,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 20,
     alignItems: 'center',
-    backgroundColor: Colors.salmon, // Updated to use new color
+    backgroundColor: Colors.salmon,
   },
   contentTitle: {
     fontSize: 22,
@@ -462,21 +469,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 0,
     overflow: 'hidden',
-    backgroundColor: Colors.darkRed, // Updated to use new color
+    backgroundColor: Colors.darkRed,
   },
   dayHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: Colors.burgundy, // Updated to use new color
+    backgroundColor: Colors.burgundy,
   },
   dayTitleContainer: {
     flex: 1,
   },
   dayNumber: {
     fontSize: 14,
-    color: Colors.orange, // Updated to use new color
+    color: Colors.orange,
     fontWeight: 'bold',
     marginBottom: 2,
   },
@@ -507,6 +514,11 @@ const styles = StyleSheet.create({
     color: Colors.primaryText,
     lineHeight: 20,
   },
+  fullContent: {
+    fontSize: 14,
+    color: Colors.primaryText,
+    lineHeight: 20,
+  },
   actionButtons: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -523,12 +535,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   primaryButton: {
-    backgroundColor: Colors.terraCotta, // Updated to use new color
+    backgroundColor: Colors.terraCotta,
   },
   secondaryButton: {
     backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: Colors.orange, // Updated to use new color
+    borderColor: Colors.orange,
   },
   actionButtonText: {
     fontSize: 16,
@@ -537,10 +549,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   secondaryButtonText: {
-    color: Colors.orange, // Updated to use new color
+    color: Colors.orange,
   },
   generateButton: {
-    backgroundColor: Colors.terraCotta, // Updated to use new color
+    backgroundColor: Colors.terraCotta,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
