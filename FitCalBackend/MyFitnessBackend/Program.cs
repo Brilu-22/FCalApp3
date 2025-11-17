@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:8081",    // Expo web alternative
                 "http://localhost:19006",   // Expo dev client
                 "http://10.0.2.2:5089",     // Android emulator
-                "http://192.168.1.100:5089" // Your local IP
+                "http://192.168.59.46:5089"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()

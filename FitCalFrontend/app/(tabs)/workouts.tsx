@@ -1,4 +1,4 @@
-// app/(tabs)/workouts.tsx - COMPLETE FIXED VERSION
+// app/(tabs)/workouts.tsx - FIXED API URL
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator, TextInput, Platform } from 'react-native';
 import { Colors } from '../../constants/Colours';
@@ -8,10 +8,8 @@ import { router } from 'expo-router';
 import { useUser } from '../_layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Simple API URL configuration
-const API_BASE_URL = Platform.OS === 'ios' 
-  ? 'http://10.0.2.2:5089/api'
-  : 'http://localhost:5089/api';
+// app/(tabs)/workouts.tsx - CHANGE BACK TO LOCALHOST
+const API_BASE_URL = 'http://localhost:5089/api/AIPlan';
 
 export default function WorkoutsScreen() {
   const user = useUser();
@@ -26,13 +24,11 @@ export default function WorkoutsScreen() {
   useEffect(() => {
     console.log('🏠 Workouts Screen - User has plan:', user?.hasExistingPlan);
     
-    // If user already has a plan, redirect them to home
     if (user?.hasExistingPlan) {
       console.log('🔄 User has plan, redirecting to home');
       router.replace('/(tabs)/home');
     }
 
-    // Pre-fill with user data if available
     if (user?.currentWeight) {
       setCurrentWeight(String(user.currentWeight));
     }
@@ -63,9 +59,9 @@ export default function WorkoutsScreen() {
       return;
     }
 
-    console.log('🟡 All fields filled, starting generation...');
+    console.log('🟡 All fields validated, starting generation...');
     setGeneratingPlan(true);
-    
+
     try {
       const requestBody = {
         currentWeightKg: currentWeightKg,
@@ -78,10 +74,11 @@ export default function WorkoutsScreen() {
 
       console.log('🟡 Request body:', requestBody);
       
+      // FIXED: The URL now correctly points to /api/AIPlan/generate_ai_plan
       const apiUrl = `${API_BASE_URL}/generate_ai_plan`;
       console.log('🟡 API URL:', apiUrl);
       
-      console.log('🟡 Making fetch request...');
+      console.log('🟡 Making fetch request to backend...');
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -95,17 +92,8 @@ export default function WorkoutsScreen() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Backend error:', errorText);
-        
-        if (response.status === 403) {
-          Alert.alert('API Error', 'Backend service is not properly configured. Please check API keys.');
-        } else if (response.status === 500) {
-          Alert.alert('Server Error', 'Internal server error. Please try again later.');
-        } else if (response.status === 503) {
-          Alert.alert('Service Unavailable', 'AI service is temporarily unavailable. Please wait a moment and try again.');
-        } else {
-          Alert.alert('Error', `Server error: ${response.status} - ${errorText}`);
-        }
+        console.error('❌ Backend error response:', errorText);
+        Alert.alert('Error', `Server error: ${response.status} - ${errorText}`);
         return;
       }
 
@@ -121,12 +109,8 @@ export default function WorkoutsScreen() {
           generatedAt: new Date().toISOString()
         };
 
-        // Save the plan
         await AsyncStorage.setItem('lastGeneratedDietPlan', JSON.stringify(planData));
         console.log('💾 Plan saved to storage');
-        
-        // Force refresh by navigating directly
-        console.log('🔄 Forcing navigation to home...');
         
         Alert.alert(
           'Success!', 
@@ -136,7 +120,6 @@ export default function WorkoutsScreen() {
               text: 'View My Plan',
               onPress: () => {
                 console.log('🎯 Navigating to home dashboard');
-                // Use replace to force a fresh load
                 router.replace('/(tabs)/home');
               }
             }
@@ -144,7 +127,7 @@ export default function WorkoutsScreen() {
         );
       } else {
         console.log('❌ No aiResponse in data:', data);
-        Alert.alert('Error', 'No plan was generated. Please try again.');
+        Alert.alert('Error', 'No plan content was found in the AI response. Please try again.');
       }
 
     } catch (error: any) {
@@ -155,6 +138,7 @@ export default function WorkoutsScreen() {
     }
   };
 
+  // [Keep the rest of your component and styles exactly the same]
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
@@ -282,6 +266,7 @@ export default function WorkoutsScreen() {
   );
 }
 
+// [Keep all your existing styles exactly the same]
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

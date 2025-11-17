@@ -1,4 +1,4 @@
-// FitzFrontend/app/signup.tsx
+// FitzFrontend/app/(auth)/signup.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { Colors } from '../../constants/Colours';

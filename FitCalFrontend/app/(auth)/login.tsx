@@ -1,4 +1,4 @@
-// FitzFrontend/app/login.tsx
+// FitzFrontend/app/(auth)/login.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { Colors } from '../../constants/Colours';
