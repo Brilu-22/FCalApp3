@@ -67,7 +67,7 @@ export default function SignUpScreen() {
           {/* Logo Image */}
           <View style={styles.logoContainer}>
             <Image 
-              source={require('../../assets/images/mlogo.svg')} 
+              source={require('../../assets/mlogo.svg')} 
               style={styles.logoImage}
               resizeMode="contain"
             />

@@ -51,7 +51,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             {/* Ensure the path matches your project structure */}
             <Image 
-              source={require('../../assets/images/mlogo.svg')} 
+              source={require('../../assets/mlogo.svg')} 
               style={styles.logoImage}
               resizeMode="contain"
             />

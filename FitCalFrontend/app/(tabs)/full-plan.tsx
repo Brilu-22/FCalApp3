@@ -1,6 +1,17 @@
 // FitzFrontend/app/full-plan.tsx - DARK MODE
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, Dimensions, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  SafeAreaView, 
+  TouchableOpacity, 
+  Alert, 
+  ActivityIndicator, 
+  Platform,
+  Dimensions 
+} from 'react-native';
 import { Colors } from '../../constants/Colours';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -167,86 +178,122 @@ export default function FullPlanScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Your Blueprint</Text>
-        <View style={{ width: 40 }} />
-      </View>
-
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      {/* Web View Container for centering on desktop */}
+      <View style={styles.webContainer}>
         
-        {/* Dashboard Stats Grid */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Target</Text>
-            <Text style={styles.statValue}>{planData.params.targetWeightKg}<Text style={styles.statUnit}>kg</Text></Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Duration</Text>
-            <Text style={styles.statValue}>{planData.params.workoutDurationMinutes}<Text style={styles.statUnit}>m</Text></Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Freq</Text>
-            <Text style={styles.statValue}>{planData.params.daysPerWeek}<Text style={styles.statUnit}>/wk</Text></Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statLabel}>Level</Text>
-            <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
-              {planData.params.fitnessLevel ? planData.params.fitnessLevel.substring(0,3).toUpperCase() : 'INT'}
-            </Text>
-          </View>
+        {/* Top Navigation Bar */}
+        <View style={styles.navBar}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
         </View>
 
-        {/* Segmented Control Tabs */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tabSegment, activeTab === 'workout' && styles.tabSegmentActive]}
-            onPress={() => setActiveTab('workout')}
-            activeOpacity={1}
-          >
-            <Ionicons 
-              name="barbell" 
-              size={18} 
-              color={activeTab === 'workout' ? Colors.terraCotta : '#888'} 
-            />
-            <Text style={[styles.tabText, activeTab === 'workout' && styles.tabTextActive]}>Workouts</Text>
-          </TouchableOpacity>
+        <ScrollView 
+          style={styles.container} 
+          showsVerticalScrollIndicator={false} 
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
           
-          <TouchableOpacity
-            style={[styles.tabSegment, activeTab === 'diet' && styles.tabSegmentActive]}
-            onPress={() => setActiveTab('diet')}
-            activeOpacity={1}
-          >
-            <Ionicons 
-              name="restaurant" 
-              size={18} 
-              color={activeTab === 'diet' ? Colors.terraCotta : '#888'} 
-            />
-            <Text style={[styles.tabText, activeTab === 'diet' && styles.tabTextActive]}>Nutrition</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Big Title Section */}
+          <View style={styles.titleSection}>
+            <Text style={styles.headerTitle}>Your Blueprint</Text>
+            <Text style={styles.headerSubtitle}>Personalized AI Roadmap</Text>
+          </View>
 
-        <Text style={styles.sectionHeader}>
-          {activeTab === 'workout' ? 'Weekly Routine' : 'Meal Plan'}
-        </Text>
+          {/* Dashboard Stats Grid */}
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <View style={styles.statIconBg}>
+                 <Ionicons name="flag-outline" size={16} color="#FFF" />
+              </View>
+              <View>
+                <Text style={styles.statLabel}>Target</Text>
+                <Text style={styles.statValue}>{planData.params.targetWeightKg}<Text style={styles.statUnit}>kg</Text></Text>
+              </View>
+            </View>
 
-        <View style={styles.listContainer}>
-          {formatPlanContent()}
-        </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconBg}>
+                 <Ionicons name="hourglass-outline" size={16} color="#FFF" />
+              </View>
+              <View>
+                <Text style={styles.statLabel}>Time</Text>
+                <Text style={styles.statValue}>{planData.params.workoutDurationMinutes}<Text style={styles.statUnit}>m</Text></Text>
+              </View>
+            </View>
 
-        <View style={styles.actionRow}>
-          <TouchableOpacity 
-            style={styles.outlineButton}
-            onPress={() => router.push('/(tabs)/workouts')}
-          >
-            <Ionicons name="refresh" size={18} color="#FFFFFF" />
-            <Text style={styles.outlineButtonText}>Regenerate</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.statCard}>
+              <View style={styles.statIconBg}>
+                 <Ionicons name="calendar-outline" size={16} color="#FFF" />
+              </View>
+              <View>
+                <Text style={styles.statLabel}>Freq</Text>
+                <Text style={styles.statValue}>{planData.params.daysPerWeek}<Text style={styles.statUnit}>/wk</Text></Text>
+              </View>
+            </View>
 
-      </ScrollView>
+            <View style={styles.statCard}>
+              <View style={styles.statIconBg}>
+                 <Ionicons name="fitness-outline" size={16} color="#FFF" />
+              </View>
+              <View>
+                <Text style={styles.statLabel}>Level</Text>
+                <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>
+                  {planData.params.fitnessLevel ? planData.params.fitnessLevel.substring(0,3).toUpperCase() : 'INT'}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Segmented Control Tabs */}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tabSegment, activeTab === 'workout' && styles.tabSegmentActive]}
+              onPress={() => setActiveTab('workout')}
+              activeOpacity={1}
+            >
+              <Ionicons 
+                name="barbell" 
+                size={18} 
+                color={activeTab === 'workout' ? Colors.terraCotta : '#888'} 
+              />
+              <Text style={[styles.tabText, activeTab === 'workout' && styles.tabTextActive]}>Workouts</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.tabSegment, activeTab === 'diet' && styles.tabSegmentActive]}
+              onPress={() => setActiveTab('diet')}
+              activeOpacity={1}
+            >
+              <Ionicons 
+                name="restaurant" 
+                size={18} 
+                color={activeTab === 'diet' ? Colors.terraCotta : '#888'} 
+              />
+              <Text style={[styles.tabText, activeTab === 'diet' && styles.tabTextActive]}>Nutrition</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.sectionHeader}>
+            {activeTab === 'workout' ? 'Weekly Routine' : 'Meal Plan'}
+          </Text>
+
+          <View style={styles.listContainer}>
+            {formatPlanContent()}
+          </View>
+
+          <View style={styles.actionRow}>
+            <TouchableOpacity 
+              style={styles.outlineButton}
+              onPress={() => router.push('/(tabs)/workouts')}
+            >
+              <Ionicons name="refresh" size={18} color="#FFFFFF" />
+              <Text style={styles.outlineButtonText}>Regenerate</Text>
+            </TouchableOpacity>
+          </View>
+
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -256,46 +303,82 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000', // Pure Black
   },
+  // This container restricts width on Web but allows full flex on Mobile
+  webContainer: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 600, // Prevents stretching on desktop
+    alignSelf: 'center',
+  },
   container: {
     flex: 1,
     paddingHorizontal: 20,
   },
-  headerContainer: {
+  
+  // New Navigation Bar Styles
+  navBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#000000',
+    marginTop: Platform.OS === 'android' ? 25 : 0,
   },
   backButton: {
-    padding: 8,
-    marginLeft: -8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1C1C1E',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+  // Big Title Area
+  titleSection: {
+    marginBottom: 24,
+    marginTop: 8,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 34, // Larger, cleaner font
+    fontWeight: '800',
     color: '#FFFFFF',
+    letterSpacing: -1,
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    color: '#888',
+    fontWeight: '500',
   },
 
-  // Stats Grid
+  // Improved Stats Grid
   statsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap', // Allows wrapping if screen is very narrow
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 32,
   },
   statCard: {
     flex: 1,
+    minWidth: '45%', // On very small screens, this makes it 2x2. On wider, 1x4.
     backgroundColor: '#1C1C1E',
-    padding: 12,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 20,
+    flexDirection: 'row', // Horizontal layout inside the card
+    alignItems: 'center',
+    gap: 12,
+  },
+  statIconBg: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#2C2C2E',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   statLabel: {
     fontSize: 11,
     color: '#888',
     fontWeight: '600',
-    marginBottom: 4,
     textTransform: 'uppercase',
   },
   statValue: {
@@ -322,7 +405,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12, // Taller touch area
     borderRadius: 12,
     gap: 8,
   },
@@ -339,10 +422,11 @@ const styles = StyleSheet.create({
   },
 
   sectionHeader: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 16,
+    marginLeft: 4,
   },
 
   // Accordion Card
@@ -359,24 +443,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: 20, // Increased padding
   },
   dayHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
   },
   dayBadge: {
     backgroundColor: '#2C2C2E',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
   },
   dayBadgeActive: {
     backgroundColor: Colors.terraCotta,
   },
   dayBadgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#888',
   },
@@ -384,23 +468,23 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
   dayTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   dayBody: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
   contentBlock: {
-    paddingTop: 8,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#2C2C2E',
   },
   bodyText: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#CCC',
-    lineHeight: 24,
+    lineHeight: 26,
   },
   cardFooter: {
     marginTop: 16,
@@ -410,27 +494,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#2C2C2E',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 6,
-    gap: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    gap: 6,
   },
   metaText: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#888',
     fontWeight: '500',
   },
 
   actionRow: {
-    marginTop: 24,
+    marginTop: 30,
     alignItems: 'center',
   },
   outlineButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 14,
     borderWidth: 1,
     borderColor: '#444',
     gap: 8,
@@ -438,6 +522,7 @@ const styles = StyleSheet.create({
   outlineButtonText: {
     fontWeight: '600',
     color: '#FFFFFF',
+    fontSize: 15,
   },
 
   centerContainer: {
