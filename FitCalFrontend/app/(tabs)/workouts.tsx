@@ -1,17 +1,15 @@
-// app/(tabs)/workouts.tsx - FIXED API URL
+// app/(tabs)/workouts.tsx - DARK MODE
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator, TextInput, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator, TextInput, Dimensions, Platform, KeyboardAvoidingView } from 'react-native';
 import { Colors } from '../../constants/Colours';
-import Card from '../../components/Card';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useUser } from '../_layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// app/(tabs)/workouts.tsx - CHANGE BACK TO LOCALHOST
 const API_BASE_URL = 'http://localhost:5089/api/AIPlan';
 
-export default function WorkoutsScreen() {
+export default function WorkoutsScreen() { 
   const user = useUser();
   const [currentWeight, setCurrentWeight] = useState<string>('');
   const [targetWeight, setTargetWeight] = useState<string>('');
@@ -22,26 +20,15 @@ export default function WorkoutsScreen() {
   const [generatingPlan, setGeneratingPlan] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log('🏠 Workouts Screen - User has plan:', user?.hasExistingPlan);
-    
     if (user?.hasExistingPlan) {
-      console.log('🔄 User has plan, redirecting to home');
       router.replace('/(tabs)/home');
     }
-
-    if (user?.currentWeight) {
-      setCurrentWeight(String(user.currentWeight));
-    }
-    if (user?.targetWeight) {
-      setTargetWeight(String(user.targetWeight));
-    }
+    if (user?.currentWeight) setCurrentWeight(String(user.currentWeight));
+    if (user?.targetWeight) setTargetWeight(String(user.targetWeight));
   }, [user]);
 
   const generateAiPlan = async () => {
-    console.log('🟡 Generate button clicked');
-    
     if (!currentWeight || !targetWeight || !workoutDuration || !daysPerWeek) {
-      console.log('❌ Missing fields:', { currentWeight, targetWeight, workoutDuration, daysPerWeek });
       Alert.alert('Missing Info', 'Please fill in all required fields.');
       return;
     }
@@ -51,343 +38,328 @@ export default function WorkoutsScreen() {
     const workoutDurationMinutes = parseInt(workoutDuration);
     const daysPerWeekInt = parseInt(daysPerWeek);
 
-    if (isNaN(currentWeightKg) || currentWeightKg <= 0 ||
-        isNaN(targetWeightKg) || targetWeightKg <= 0 ||
-        isNaN(workoutDurationMinutes) || workoutDurationMinutes <= 0 ||
-        isNaN(daysPerWeekInt) || daysPerWeekInt <= 0) {
-      Alert.alert('Invalid Input', 'Please enter valid positive numbers for all fields.');
+    if (isNaN(currentWeightKg) || isNaN(targetWeightKg) || isNaN(workoutDurationMinutes) || isNaN(daysPerWeekInt)) {
+      Alert.alert('Invalid Input', 'Please enter valid numbers.');
       return;
     }
 
-    console.log('🟡 All fields validated, starting generation...');
     setGeneratingPlan(true);
 
     try {
       const requestBody = {
-        currentWeightKg: currentWeightKg,
-        targetWeightKg: targetWeightKg,
-        workoutDurationMinutes: workoutDurationMinutes,
+        currentWeightKg,
+        targetWeightKg,
+        workoutDurationMinutes,
         daysPerWeek: daysPerWeekInt,
-        fitnessLevel: fitnessLevel,
-        dietaryPreference: dietaryPreference,
+        fitnessLevel,
+        dietaryPreference,
       };
 
-      console.log('🟡 Request body:', requestBody);
-      
-      // FIXED: The URL now correctly points to /api/AIPlan/generate_ai_plan
       const apiUrl = `${API_BASE_URL}/generate_ai_plan`;
-      console.log('🟡 API URL:', apiUrl);
-      
-      console.log('🟡 Making fetch request to backend...');
       const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       });
 
-      console.log('🟡 Response status:', response.status);
-      console.log('🟡 Response ok:', response.ok);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Backend error response:', errorText);
-        Alert.alert('Error', `Server error: ${response.status} - ${errorText}`);
-        return;
-      }
-
+      if (!response.ok) throw new Error('Server error');
       const data = await response.json();
-      console.log('✅ AI Response received:', data);
 
       if (data.aiResponse) {
-        console.log('✅ AI plan generated successfully!');
-        
         const planData = {
           text: data.aiResponse,
           params: requestBody,
           generatedAt: new Date().toISOString()
         };
-
         await AsyncStorage.setItem('lastGeneratedDietPlan', JSON.stringify(planData));
-        console.log('💾 Plan saved to storage');
-        
-        Alert.alert(
-          'Success!', 
-          'Your personalized fitness plan has been generated!',
-          [
-            {
-              text: 'View My Plan',
-              onPress: () => {
-                console.log('🎯 Navigating to home dashboard');
-                router.replace('/(tabs)/home');
-              }
-            }
-          ]
-        );
+        Alert.alert('Success!', 'Plan generated!', [
+          { text: 'View My Plan', onPress: () => router.replace('/(tabs)/home') }
+        ]);
       } else {
-        console.log('❌ No aiResponse in data:', data);
-        Alert.alert('Error', 'No plan content was found in the AI response. Please try again.');
+        Alert.alert('Error', 'No plan content found.');
       }
-
     } catch (error: any) {
-      console.error('❌ Fetch error:', error);
-      Alert.alert('Connection Error', `Failed to connect to the server: ${error.message}`);
+      Alert.alert('Connection Error', `Failed to connect: ${error.message}`);
     } finally {
       setGeneratingPlan(false);
     }
   };
 
-  // [Keep the rest of your component and styles exactly the same]
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.header}>Create Your Plan</Text>
-
-        <Card style={styles.onboardingCard}>
-          <View style={styles.welcomeSection}>
-            <Ionicons name="sparkles" size={48} color={Colors.orange} />
-            <Text style={styles.cardTitle}>Welcome to Your Fitness Journey!</Text>
-            <Text style={styles.subtitle}>
-              Let's create your personalized AI-powered fitness and nutrition plan
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+          
+          <View style={styles.headerSection}>
+            <Text style={styles.headerTitle}>Design Your Plan</Text>
+            <Text style={styles.headerSubtitle}>
+              Tell us your goals, and our AI will build a perfect routine for you.
             </Text>
           </View>
 
-          <Text style={styles.sectionTitle}>Your Goals</Text>
-          
-          <Text style={styles.inputLabel}>Current Weight (kg)*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 70"
-            placeholderTextColor={Colors.secondaryText}
-            keyboardType="numeric"
-            value={currentWeight}
-            onChangeText={setCurrentWeight}
-          />
+          {/* Form Container - Dark Mode Surface */}
+          <View style={styles.formContainer}>
+            
+            <Text style={styles.sectionLabel}>Body Metrics</Text>
+            <View style={styles.rowGrid}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Current (kg)</Text>
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="0"
+                    placeholderTextColor="#666"
+                    keyboardType="numeric"
+                    value={currentWeight}
+                    onChangeText={setCurrentWeight}
+                  />
+                </View>
+              </View>
+              
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Target (kg)</Text>
+                <View style={styles.inputWrapper}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="0"
+                    placeholderTextColor="#666"
+                    keyboardType="numeric"
+                    value={targetWeight}
+                    onChangeText={setTargetWeight}
+                  />
+                </View>
+              </View>
+            </View>
 
-          <Text style={styles.inputLabel}>Target Weight (kg)*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 65"
-            placeholderTextColor={Colors.secondaryText}
-            keyboardType="numeric"
-            value={targetWeight}
-            onChangeText={setTargetWeight}
-          />
+            <Text style={styles.sectionLabel}>Constraints</Text>
+            <View style={styles.rowGrid}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Duration (min)</Text>
+                <View style={styles.inputWrapper}>
+                  <Ionicons name="time-outline" size={16} color="#888" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="45"
+                    placeholderTextColor="#666"
+                    keyboardType="numeric"
+                    value={workoutDuration}
+                    onChangeText={setWorkoutDuration}
+                  />
+                </View>
+              </View>
+              
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Days/Week</Text>
+                <View style={styles.inputWrapper}>
+                  <Ionicons name="calendar-outline" size={16} color="#888" style={styles.inputIcon} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="5"
+                    placeholderTextColor="#666"
+                    keyboardType="numeric"
+                    value={daysPerWeek}
+                    onChangeText={setDaysPerWeek}
+                  />
+                </View>
+              </View>
+            </View>
 
-          <Text style={styles.sectionTitle}>Workout Preferences</Text>
+            <Text style={styles.sectionLabel}>Experience Level</Text>
+            <View style={styles.chipsContainer}>
+              {['beginner', 'intermediate', 'advanced'].map((level) => (
+                <TouchableOpacity
+                  key={level}
+                  onPress={() => setFitnessLevel(level)}
+                  style={[
+                    styles.chip,
+                    fitnessLevel === level && styles.chipSelected
+                  ]}
+                >
+                  <Text style={[
+                    styles.chipText,
+                    fitnessLevel === level && styles.chipTextSelected
+                  ]}>
+                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
-          <Text style={styles.inputLabel}>Workout Duration (minutes)*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 45"
-            placeholderTextColor={Colors.secondaryText}
-            keyboardType="numeric"
-            value={workoutDuration}
-            onChangeText={setWorkoutDuration}
-          />
+            <Text style={styles.sectionLabel}>Dietary Style</Text>
+            <View style={styles.chipsContainer}>
+              {['balanced', 'high-protein', 'vegetarian', 'low-carb'].map((diet) => (
+                <TouchableOpacity
+                  key={diet}
+                  onPress={() => setDietaryPreference(diet)}
+                  style={[
+                    styles.chip,
+                    dietaryPreference === diet && styles.chipSelected
+                  ]}
+                >
+                  <Text style={[
+                    styles.chipText,
+                    dietaryPreference === diet && styles.chipTextSelected
+                  ]}>
+                    {diet.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
-          <Text style={styles.inputLabel}>Days per Week*</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 5"
-            placeholderTextColor={Colors.secondaryText}
-            keyboardType="numeric"
-            value={daysPerWeek}
-            onChangeText={setDaysPerWeek}
-          />
+            <TouchableOpacity
+              style={[styles.submitButton, generatingPlan && styles.submitButtonDisabled]}
+              onPress={generateAiPlan}
+              disabled={generatingPlan}
+              activeOpacity={0.8}
+            >
+              {generatingPlan ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <>
+                  <Text style={styles.submitButtonText}>Generate Plan</Text>
+                  <Ionicons name="sparkles" size={20} color="#000" style={{ marginLeft: 8 }} />
+                </>
+              )}
+            </TouchableOpacity>
 
-          <Text style={styles.inputLabel}>Fitness Level</Text>
-          <View style={styles.optionRow}>
-            {['beginner', 'intermediate', 'advanced'].map((level) => (
-              <TouchableOpacity
-                key={level}
-                style={[
-                  styles.optionButton,
-                  fitnessLevel === level && styles.optionButtonSelected
-                ]}
-                onPress={() => setFitnessLevel(level)}
-              >
-                <Text style={[
-                  styles.optionText,
-                  fitnessLevel === level && styles.optionTextSelected
-                ]}>
-                  {level.charAt(0).toUpperCase() + level.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            <Text style={styles.disclaimer}>
+              AI will generate a {daysPerWeek}-day routine based on these metrics.
+            </Text>
+
           </View>
-
-          <Text style={styles.sectionTitle}>Nutrition Preferences</Text>
-
-          <Text style={styles.inputLabel}>Dietary Preference</Text>
-          <View style={styles.optionRow}>
-            {['balanced', 'high-protein', 'vegetarian', 'low-carb'].map((diet) => (
-              <TouchableOpacity
-                key={diet}
-                style={[
-                  styles.optionButton,
-                  dietaryPreference === diet && styles.optionButtonSelected
-                ]}
-                onPress={() => setDietaryPreference(diet)}
-              >
-                <Text style={[
-                  styles.optionText,
-                  dietaryPreference === diet && styles.optionTextSelected
-                ]}>
-                  {diet.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <TouchableOpacity
-            style={[styles.generateButton, generatingPlan && styles.generateButtonDisabled]}
-            onPress={generateAiPlan}
-            disabled={generatingPlan}
-          >
-            {generatingPlan ? (
-              <ActivityIndicator color={Colors.primaryText} />
-            ) : (
-              <>
-                <Ionicons name="sparkles" size={24} color={Colors.primaryText} />
-                <Text style={styles.generateButtonText}>Generate My AI Plan</Text>
-              </>
-            )}
-          </TouchableOpacity>
-
-          <Text style={styles.note}>
-            * Our AI will create a personalized {daysPerWeek || '5'}-day plan with workouts and meals tailored to your goals and preferences.
-          </Text>
-        </Card>
-
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-// [Keep all your existing styles exactly the same]
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: '#000000', // Pure Black
   },
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    paddingHorizontal: 20,
   },
-  header: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: Colors.primaryText,
-    margin: 20,
-    marginTop: 20,
+  
+  headerSection: {
+    marginTop: 24,
+    marginBottom: 24,
   },
-  onboardingCard: {
-    marginHorizontal: 16,
-    marginBottom: 20,
-    padding: 20,
-  },
-  welcomeSection: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.primaryText,
-    marginTop: 16,
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
     marginBottom: 8,
-    textAlign: 'center',
+    letterSpacing: -0.5,
   },
-  subtitle: {
-    fontSize: 16,
-    color: Colors.secondaryText,
-    textAlign: 'center',
+  headerSubtitle: {
+    fontSize: 15,
+    color: '#A1A1A1',
     lineHeight: 22,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.orange,
-    marginTop: 20,
-    marginBottom: 15,
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.orange,
-    paddingLeft: 12,
+
+  // Main Form Card (Dark Mode)
+  formContainer: {
+    backgroundColor: '#1C1C1E', // Dark Surface
+    borderRadius: 24,
+    padding: 24,
+  },
+  
+  sectionLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 12,
+    marginTop: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  rowGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+    gap: 16,
+  },
+  inputGroup: {
+    flex: 1,
   },
   inputLabel: {
-    fontSize: 16,
-    color: Colors.primaryText,
-    marginBottom: 8,
-    marginTop: 15,
+    fontSize: 13,
     fontWeight: '600',
+    color: '#888',
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    backgroundColor: '#2C2C2E', // Input Surface
+    borderRadius: 12,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  inputIcon: {
+    marginRight: 8,
   },
   input: {
-    width: '100%',
-    backgroundColor: Colors.background,
-    borderRadius: 10,
-    padding: 15,
+    flex: 1,
     fontSize: 16,
-    color: Colors.primaryText,
-    marginBottom: 5,
-    borderColor: Colors.orange,
-    borderWidth: 1,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    height: '100%',
   },
-  optionRow: {
+
+  chipsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    gap: 10,
+    marginBottom: 24,
   },
-  optionButton: {
-    flex: 1,
-    minWidth: '48%',
-    padding: 12,
-    margin: 4,
-    backgroundColor: Colors.background,
-    borderRadius: 8,
+  chip: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#2C2C2E',
     borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
+    borderColor: 'transparent',
   },
-  optionButtonSelected: {
-    backgroundColor: Colors.terraCotta,
+  chipSelected: {
+    backgroundColor: 'rgba(231, 111, 81, 0.2)',
     borderColor: Colors.terraCotta,
   },
-  optionText: {
+  chipText: {
     fontSize: 14,
-    color: Colors.primaryText,
     fontWeight: '500',
+    color: '#888',
   },
-  optionTextSelected: {
-    color: Colors.primaryText,
-    fontWeight: 'bold',
+  chipTextSelected: {
+    color: Colors.terraCotta,
+    fontWeight: '700',
   },
-  generateButton: {
-    backgroundColor: Colors.terraCotta,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 30,
+
+  submitButton: {
+    backgroundColor: '#FFFFFF', // White button for contrast
+    height: 56,
+    borderRadius: 16,
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
   },
-  generateButtonDisabled: {
-    backgroundColor: Colors.border,
+  submitButtonDisabled: {
+    backgroundColor: '#444',
   },
-  generateButtonText: {
-    color: Colors.primaryText,
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
+  submitButtonText: {
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: '700',
   },
-  note: {
-    fontSize: 12,
-    color: Colors.secondaryText,
-    textAlign: 'center',
+  disclaimer: {
     marginTop: 16,
-    fontStyle: 'italic',
-    lineHeight: 16,
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#666',
   },
 });

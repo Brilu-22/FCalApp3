@@ -1,15 +1,23 @@
-// FitzFrontend/app/(auth)/login.tsx
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  Alert, 
+  ActivityIndicator, 
+  Image, 
+  KeyboardAvoidingView, 
+  Platform,
+  ScrollView 
+} from 'react-native';
 import { Colors } from '../../constants/Colours';
-import { auth } from '../../firebaseConfig'; // Import Firebase auth
+import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { router } from 'expo-router'; // For navigation
-
-
-
-// Example usage of signInWithEmailAndPassword is handled inside the component's handleLogin function.
-// Do not use await or undefined variables at the top level in this module.
+import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState<string>('');
@@ -24,9 +32,8 @@ export default function LoginScreen() {
         return;
       }
       await signInWithEmailAndPassword(auth, email, password);
-      // Firebase auth state listener in _layout.tsx will handle navigation for persistent login
       Alert.alert('Success', 'Logged in successfully!');
-      router.replace('/(tabs)/home'); // Redirect to home tabs after successful login
+      router.replace('/(tabs)/home');
     } catch (error: any) {
       console.error("Login error:", error);
       Alert.alert('Login Failed', error.message);
@@ -37,45 +44,77 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* MOVE. Logo with sporty styling */}
-        <View style={styles.logoContainer}>
-          <Text style={styles.logo}>MOVE</Text>
-          <Text style={styles.logoDot}>.</Text>
-        </View>
-        
-        <Text style={styles.header}>Welcome Back</Text>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          
+          {/* Logo Image */}
+          <View style={styles.logoContainer}>
+            {/* Ensure the path matches your project structure */}
+            <Image 
+              source={require('../../assets/images/mlogo.svg')} 
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </View>
+          
+          <View style={styles.headerSection}>
+            <Text style={styles.headerTitle}>Welcome Back</Text>
+            <Text style={styles.headerSubtitle}>Sign in to continue your progress.</Text>
+          </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor={Colors.secondaryText}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor={Colors.secondaryText}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          {/* Dark Card Surface */}
+          <View style={styles.formContainer}>
+            
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Email</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="mail-outline" size={20} color="#888" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your email"
+                  placeholderTextColor="#666"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+            </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-          {loading ? (
-            <ActivityIndicator color={Colors.primaryText} />
-          ) : (
-            <Text style={styles.buttonText}>Log In</Text>
-          )}
-        </TouchableOpacity>
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <View style={styles.inputWrapper}>
+                <Ionicons name="lock-closed-outline" size={20} color="#888" style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#666"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+            </View>
 
-        <TouchableOpacity onPress={() => router.replace('/(auth)/signup')}>
-          <Text style={styles.switchText}>Don't have an account? Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity 
+              style={[styles.submitButton, loading && styles.submitButtonDisabled]} 
+              onPress={handleLogin} 
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#000" />
+              ) : (
+                <Text style={styles.submitButtonText}>Log In</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.replace('/(auth)/signup')} style={styles.switchContainer}>
+              <Text style={styles.switchText}>Don't have an account? <Text style={styles.switchTextBold}>Sign Up</Text></Text>
+            </TouchableOpacity>
+
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -83,70 +122,96 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: '#000000', // Pure Black
   },
-  container: {
-    flex: 1,
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
-    backgroundColor: Colors.background,
   },
   logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logoImage: {
+    width: 180, // Adjust width based on your image aspect ratio
+    height: 60,
+    tintColor: '#FFFFFF', // Optional: If your PNG is black, this turns it white
+  },
+  headerSection: {
+    marginBottom: 24,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 8,
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    color: '#A1A1A1',
+  },
+  formContainer: {
+    backgroundColor: '#1C1C1E', // Dark Surface
+    borderRadius: 24,
+    padding: 24,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  inputWrapper: {
+    backgroundColor: '#2C2C2E', // Input Surface
+    borderRadius: 12,
+    height: 56,
     flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 10,
+    alignItems: 'center',
+    paddingHorizontal: 16,
   },
-  logo: {
-    fontSize: 52,
-    fontWeight: '900', 
-    color: Colors.border,
-    letterSpacing: 2, // Increased letter spacing for athletic feel
-    textTransform: 'uppercase', // Uppercase for stronger impact
-    fontFamily: 'System', // This will use the system's boldest font
-    textShadowColor: 'rgba(49, 49, 49, 0.3)', // Subtle shadow for depth
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
-  logoDot: {
-    fontSize: 52,
-    fontWeight: '900',
-    color: Colors.border, // Different color for the dot to make it pop
-    fontFamily: 'System',
-  },
-  header: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: Colors.primaryText,
-    marginBottom: 40,
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    width: '100%',
-    borderRadius: 10,
-    padding: 15,
+    flex: 1,
     fontSize: 16,
-    color: Colors.primaryText,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    color: '#FFFFFF',
+    height: '100%',
   },
-  button: {
-    width: '100%',
-    backgroundColor: Colors.terraCotta,
-    borderRadius: 10,
-    padding: 15,
+  submitButton: {
+    backgroundColor: '#FFFFFF', // White button
+    height: 56,
+    borderRadius: 16,
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
+    marginTop: 12,
   },
-  buttonText: {
-    color: Colors.primaryText,
-    fontSize: 18,
-    fontWeight: 'bold',
+  submitButtonDisabled: {
+    backgroundColor: '#444',
+  },
+  submitButtonText: {
+    color: '#000000', // Black text
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  switchContainer: {
+    marginTop: 24,
+    alignItems: 'center',
   },
   switchText: {
-    color: Colors.orange,
-    marginTop: 20,
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#888',
+    fontSize: 14,
+  },
+  switchTextBold: {
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
 });

@@ -1,14 +1,11 @@
-// app/(tabs)/home.tsx - COMPLETE FIXED VERSION
+// app/(tabs)/home.tsx - DARK MODE + QUOTES
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { Colors } from '../../constants/Colours';
-import Card from '../../components/Card';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../_layout';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const { width: screenWidth } = Dimensions.get('window');
 
 interface PlanData {
   text: string;
@@ -16,13 +13,24 @@ interface PlanData {
   generatedAt: string;
 }
 
+const QUOTES = [
+  "The only bad workout is the one that didn't happen.",
+  "Action is the foundational key to all success.",
+  "Don't wish for it. Work for it.",
+  "Discipline is doing what needs to be done, even if you don't want to do it.",
+  "Your body can stand almost anything. It’s your mind that you have to convince.",
+  "Success starts with self-discipline.",
+  "The pain you feel today will be the strength you feel tomorrow."
+];
+
 export default function HomeScreen() {
   const [currentDate, setCurrentDate] = useState('');
   const [currentPlan, setCurrentPlan] = useState<PlanData | null>(null);
   const [todayWorkout, setTodayWorkout] = useState<string>('');
   const [todayMeals, setTodayMeals] = useState<string>('');
+  const [quote, setQuote] = useState<string>('');
   const user = useUser();
-
+ 
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
@@ -30,28 +38,24 @@ export default function HomeScreen() {
       setCurrentDate(now.toLocaleDateString('en-US', dateOptions));
     };
     updateDateTime();
+    
+    // Set Random Quote
+    const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    setQuote(randomQuote);
 
     loadCurrentPlan();
   }, []);
 
   const loadCurrentPlan = async () => {
     try {
-      console.log('🏠 Home screen - Loading current plan...');
       const storedPlan = await AsyncStorage.getItem('lastGeneratedDietPlan');
-      console.log('🏠 Stored plan found:', !!storedPlan);
-      
       if (storedPlan) {
         const planData: PlanData = JSON.parse(storedPlan);
-        console.log('🏠 Plan data loaded:', planData);
         setCurrentPlan(planData);
-        
-        // Parse today's content from the raw AI text
         parseTodaysContent(planData.text, planData.params?.daysPerWeek || 5);
-      } else {
-        console.log('🏠 No stored plan found');
       }
     } catch (error) {
-      console.error('🏠 Error loading plan:', error);
+      console.error('Error loading plan:', error);
     }
   };
 
@@ -61,54 +65,27 @@ export default function HomeScreen() {
       const dayIndex = today === 0 ? totalDays - 1 : today - 1;
       const currentDay = Math.min(dayIndex, totalDays - 1) + 1;
 
-      console.log(`🏠 Parsing content for day ${currentDay} of ${totalDays}`);
-
-      // Look for the specific day in the AI response
       const dayPattern = new RegExp(`DAY ${currentDay}:([\\s\\S]*?)(?=DAY ${currentDay + 1}:|$)`, 'i');
       const dayMatch = aiText.match(dayPattern);
 
       if (dayMatch) {
-        const dayContent = dayMatch[0]; // Use the full match
-        
-        // Extract workout
+        const dayContent = dayMatch[0];
         const workoutMatch = dayContent.match(/WORKOUT:([\s\\S]*?)(?=MEALS:|$)/i);
-        if (workoutMatch) {
-          setTodayWorkout(workoutMatch[1].trim());
-        } else {
-          setTodayWorkout('Full body workout with strength training and cardio');
-        }
-
-        // Extract meals
         const mealsMatch = dayContent.match(/MEALS:([\s\\S]*?)(?=DAY |$)/i);
-        if (mealsMatch) {
-          setTodayMeals(mealsMatch[1].trim());
-        } else {
-          setTodayMeals('Balanced meals focusing on protein and complex carbohydrates');
-        }
+        
+        setTodayWorkout(workoutMatch ? workoutMatch[1].trim() : 'Full body workout details in plan');
+        setTodayMeals(mealsMatch ? mealsMatch[1].trim() : 'Balanced meal details in plan');
       } else {
-        // Fallback to first day
-        const firstDayMatch = aiText.match(/DAY 1:([\\s\\S]*?)(?=DAY 2:|$)/i);
-        if (firstDayMatch) {
-          const firstDayContent = firstDayMatch[0];
-          const workoutMatch = firstDayContent.match(/WORKOUT:([\s\\S]*?)(?=MEALS:|$)/i);
-          const mealsMatch = firstDayContent.match(/MEALS:([\s\\S]*?)(?=DAY |$)/i);
-          
-          setTodayWorkout(workoutMatch ? workoutMatch[1].trim() : 'Check full plan for workout details');
-          setTodayMeals(mealsMatch ? mealsMatch[1].trim() : 'Check full plan for meal details');
-        } else {
-          // Generic content if parsing fails
-          setTodayWorkout('Workout details available in full plan');
-          setTodayMeals('Meal details available in full plan');
-        }
+        setTodayWorkout('Check full plan for workout details');
+        setTodayMeals('Check full plan for meal details');
       }
     } catch (error) {
-      console.error('🏠 Error parsing today\'s content:', error);
       setTodayWorkout('Workout details available in full plan');
       setTodayMeals('Meal details available in full plan');
     }
   };
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Fitness Enthusiast';
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Athlete';
   const profileImageUrl = user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6366f1&color=ffffff&size=150`;
 
   const getGreeting = () => {
@@ -118,155 +95,172 @@ export default function HomeScreen() {
     return 'Good Evening';
   };
 
-  // Show loading state while checking for plan
+  // --- RENDER: NO PLAN STATE ---
   if (currentPlan === null && !user?.hasExistingPlan) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
           <View style={styles.headerSection}>
-            <View style={styles.headerTop}>
+            <View style={styles.headerRow}>
               <View>
-                <Text style={styles.greetingText}>{getGreeting()}</Text>
-                <Text style={styles.userName}>{displayName}</Text>
+                <Text style={styles.greetingLabel}>{getGreeting()}</Text>
+                <Text style={styles.headerTitle}>{displayName}</Text>
               </View>
-              <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+              <Image source={{ uri: profileImageUrl }} style={styles.avatar} />
             </View>
           </View>
 
-          <Card style={styles.noPlanCard}>
-            <Ionicons name="barbell-outline" size={64} color={Colors.orange} />
-            <Text style={styles.noPlanTitle}>Welcome to Your Fitness Journey!</Text>
-            <Text style={styles.noPlanText}>
-              Get started by creating your personalized AI-powered fitness and nutrition plan.
+          <View style={styles.emptyStateContainer}>
+            <View style={styles.emptyIconBubble}>
+              <Ionicons name="fitness-outline" size={48} color={Colors.orange} />
+            </View>
+            <Text style={styles.emptyTitle}>Ready to Start?</Text>
+            <Text style={styles.emptySubtitle}>
+              Build your personalized AI fitness & nutrition roadmap in seconds.
             </Text>
             <TouchableOpacity 
-              style={styles.createPlanButton}
+              style={styles.primaryButton}
               onPress={() => router.push('/(tabs)/workouts')}
             >
-              <Ionicons name="sparkles" size={20} color={Colors.primaryText} />
-              <Text style={styles.createPlanButtonText}>Create Your Plan</Text>
+              <Text style={styles.primaryButtonText}>Generate My Plan</Text>
+              <Ionicons name="arrow-forward" size={20} color="#000" />
             </TouchableOpacity>
-          </Card>
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
   }
 
-  // Show actual plan content
+  // --- RENDER: DASHBOARD STATE ---
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Header Section */}
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        
+        {/* Header Dashboard Style */}
         <View style={styles.headerSection}>
-          <View style={styles.headerTop}>
+          <View style={styles.headerRow}>
             <View>
-              <Text style={styles.greetingText}>{getGreeting()}</Text>
-              <Text style={styles.userName}>{displayName}</Text>
+              <Text style={styles.greetingLabel}>{currentDate}</Text>
+              <Text style={styles.headerTitle}>{displayName}</Text>
             </View>
-            <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+            <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
+               <Image source={{ uri: profileImageUrl }} style={styles.avatar} />
+            </TouchableOpacity>
           </View>
           
-          <View style={styles.dateTimeContainer}>
-            <Text style={styles.dateText}>{currentDate}</Text>
-            <Text style={styles.dayHighlight}>
-              {currentPlan?.params?.daysPerWeek ? `${currentPlan.params.daysPerWeek}-Day Plan` : 'Your Plan'}
-            </Text>
+          <View style={styles.planBadgeContainer}>
+            <View style={styles.planBadge}>
+              <Ionicons name="sparkles" size={12} color="#FFF" />
+              <Text style={styles.planBadgeText}>
+                {currentPlan?.params?.daysPerWeek ? `${currentPlan.params.daysPerWeek}-Day Active Plan` : 'Active Plan'}
+              </Text>
+            </View>
           </View>
         </View>
 
-        {/* Today's Workout */}
-        <Card style={styles.todayCard}>
-          <View style={styles.cardHeader}>
-            <Ionicons name="barbell" size={24} color={Colors.terraCotta} />
-            <Text style={styles.cardTitle}>Today's Workout</Text>
+        {/* Quote Widget */}
+        <View style={styles.quoteCard}>
+          <View style={styles.quoteHeader}>
+            <Ionicons name="bulb" size={16} color={Colors.orange} />
+            <Text style={styles.quoteTitle}>Daily Motivation</Text>
           </View>
-          <Text style={styles.planContent}>
-            {todayWorkout || 'Full body workout with strength training and cardio exercises'}
-          </Text>
-          <TouchableOpacity 
-            style={styles.viewDetailsButton}
-            onPress={() => router.push('/full-plan')}
-          >
-            <Text style={styles.viewDetailsText}>View Full Workout Plan</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.terraCotta} />
+          <Text style={styles.quoteText}>"{quote}"</Text>
+        </View>
+
+        {/* Stats Row */}
+        <View style={styles.statsGrid}>
+          <View style={styles.statBox}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(231, 111, 81, 0.2)' }]}>
+              <Ionicons name="flame" size={20} color={Colors.terraCotta} />
+            </View>
+            <Text style={styles.statValue}>{currentPlan?.params?.workoutDurationMinutes || '45'}</Text>
+            <Text style={styles.statLabel}>Mins/Day</Text>
+          </View>
+          
+          <View style={styles.statBox}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(42, 157, 143, 0.2)' }]}>
+              <Ionicons name="barbell" size={20} color="#2A9D8F" />
+            </View>
+            <Text style={styles.statValue}>{currentPlan?.params?.daysPerWeek || '5'}</Text>
+            <Text style={styles.statLabel}>Workouts</Text>
+          </View>
+
+          <View style={styles.statBox}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(244, 162, 97, 0.2)' }]}>
+              <Ionicons name="scale" size={20} color={Colors.orange} />
+            </View>
+            <Text style={styles.statValue}>{currentPlan?.params?.targetWeightKg || '--'}</Text>
+            <Text style={styles.statLabel}>Target Kg</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Today's Schedule</Text>
+
+        {/* Main Widget: Workout */}
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPress={() => router.push('/full-plan')}
+          style={styles.widgetContainer}
+        >
+          <View style={[styles.widgetLeftStrip, { backgroundColor: Colors.terraCotta }]} />
+          <View style={styles.widgetContent}>
+            <View style={styles.widgetHeader}>
+              <Text style={styles.widgetTitle}>Workout Focus</Text>
+              <Ionicons name="chevron-forward" size={18} color="#666" />
+            </View>
+            <Text numberOfLines={3} style={styles.widgetBody}>
+              {todayWorkout}
+            </Text>
+            <View style={styles.widgetFooter}>
+              <View style={styles.tag}>
+                <Ionicons name="time-outline" size={12} color="#CCC" />
+                <Text style={styles.tagText}>{currentPlan?.params?.workoutDurationMinutes || 45} min</Text>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* Main Widget: Nutrition */}
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPress={() => router.push('/full-plan')}
+          style={styles.widgetContainer}
+        >
+          <View style={[styles.widgetLeftStrip, { backgroundColor: Colors.orange }]} />
+          <View style={styles.widgetContent}>
+            <View style={styles.widgetHeader}>
+              <Text style={styles.widgetTitle}>Nutrition Plan</Text>
+              <Ionicons name="chevron-forward" size={18} color="#666" />
+            </View>
+            <Text numberOfLines={3} style={styles.widgetBody}>
+              {todayMeals}
+            </Text>
+            <View style={styles.widgetFooter}>
+              <View style={styles.tag}>
+                <Ionicons name="nutrition-outline" size={12} color="#CCC" />
+                <Text style={styles.tagText}>Healthy & Balanced</Text>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* Quick Actions Grid */}
+        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <View style={styles.actionGrid}>
+          <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/(tabs)/workouts')}>
+            <View style={[styles.actionIconCircle, { backgroundColor: Colors.terraCotta }]}>
+              <Ionicons name="refresh" size={22} color="#FFF" />
+            </View>
+            <Text style={styles.actionCardTitle}>Regenerate</Text>
           </TouchableOpacity>
-        </Card>
 
-        {/* Today's Meals */}
-        <Card style={styles.todayCard}>
-          <View style={styles.cardHeader}>
-            <Ionicons name="restaurant" size={24} color={Colors.orange} />
-            <Text style={styles.cardTitle}>Today's Nutrition</Text>
-          </View>
-          <Text style={styles.planContent}>
-            {todayMeals || 'Balanced meals with protein, complex carbs, and healthy fats'}
-          </Text>
-          <TouchableOpacity 
-            style={styles.viewDetailsButton}
-            onPress={() => router.push('/full-plan')}
-          >
-            <Text style={styles.viewDetailsText}>View Full Meal Plan</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.orange} />
+          <TouchableOpacity style={styles.actionCard} onPress={() => router.push('/full-plan')}>
+            <View style={[styles.actionIconCircle, { backgroundColor: Colors.orange }]}>
+              <Ionicons name="list" size={22} color="#FFF" />
+            </View>
+            <Text style={styles.actionCardTitle}>Full Plan</Text>
           </TouchableOpacity>
-        </Card>
-
-        {/* Progress Overview */}
-        <Card style={styles.progressCard}>
-          <Text style={styles.cardTitle}>Your Progress</Text>
-          <View style={styles.progressGrid}>
-            <View style={styles.progressItem}>
-              <Ionicons name="calendar" size={24} color={Colors.salmon} />
-              <Text style={styles.progressNumber}>
-                {currentPlan?.params?.daysPerWeek || '5'}
-              </Text>
-              <Text style={styles.progressLabel}>Day Plan</Text>
-            </View>
-            <View style={styles.progressItem}>
-              <Ionicons name="time" size={24} color={Colors.terraCotta} />
-              <Text style={styles.progressNumber}>
-                {currentPlan?.params?.workoutDurationMinutes || '45'}
-              </Text>
-              <Text style={styles.progressLabel}>Minutes</Text>
-            </View>
-            <View style={styles.progressItem}>
-              <Ionicons name="trending-up" size={24} color={Colors.orange} />
-              <Text style={styles.progressNumber}>
-                {currentPlan?.params?.targetWeightKg || '0'}kg
-              </Text>
-              <Text style={styles.progressLabel}>Goal Weight</Text>
-            </View>
-          </View>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card style={styles.actionsCard}>
-          <Text style={styles.cardTitle}>Quick Actions</Text>
-          <View style={styles.actionsGrid}>
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => router.push('/(tabs)/workouts')}
-            >
-              <Ionicons name="refresh" size={24} color={Colors.terraCotta} />
-              <Text style={styles.actionText}>New Plan</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => router.push('/full-plan')}
-            >
-              <Ionicons name="document-text" size={24} color={Colors.orange} />
-              <Text style={styles.actionText}>Full Plan</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => router.push('/(tabs)/profile')}
-            >
-              <Ionicons name="person" size={24} color={Colors.salmon} />
-              <Text style={styles.actionText}>Profile</Text>
-            </TouchableOpacity>
-          </View>
-        </Card>
+        </View>
 
       </ScrollView>
     </SafeAreaView>
@@ -274,34 +268,259 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: Colors.background },
-  container: { flex: 1, backgroundColor: Colors.background, paddingHorizontal: 16 },
-  headerSection: { paddingVertical: 24 },
-  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  greetingText: { fontSize: 18, color: Colors.secondaryText, marginBottom: 4 },
-  userName: { fontSize: 28, fontWeight: 'bold', color: Colors.primaryText },
-  profileImage: { width: 56, height: 56, borderRadius: 28, borderWidth: 3, borderColor: Colors.terraCotta },
-  dateTimeContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  dateText: { fontSize: 16, color: Colors.primaryText, fontWeight: '600' },
-  dayHighlight: { fontSize: 16, color: Colors.orange, fontWeight: 'bold' },
-  noPlanCard: { alignItems: 'center', justifyContent: 'center', padding: 40, marginVertical: 20 },
-  noPlanTitle: { fontSize: 24, fontWeight: 'bold', color: Colors.primaryText, marginTop: 20, marginBottom: 12, textAlign: 'center' },
-  noPlanText: { fontSize: 16, color: Colors.secondaryText, textAlign: 'center', marginBottom: 24, lineHeight: 22 },
-  createPlanButton: { backgroundColor: Colors.terraCotta, borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24, flexDirection: 'row', alignItems: 'center' },
-  createPlanButtonText: { color: Colors.primaryText, fontSize: 16, fontWeight: '600', marginLeft: 8 },
-  todayCard: { marginBottom: 16, padding: 20 },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  cardTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.primaryText, marginLeft: 8 },
-  planContent: { fontSize: 14, color: Colors.primaryText, lineHeight: 20, marginBottom: 16 },
-  viewDetailsButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start' },
-  viewDetailsText: { color: Colors.terraCotta, fontSize: 14, fontWeight: '600', marginRight: 4 },
-  progressCard: { marginBottom: 16, padding: 20 },
-  progressGrid: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
-  progressItem: { alignItems: 'center', flex: 1 },
-  progressNumber: { fontSize: 20, fontWeight: 'bold', color: Colors.primaryText, marginTop: 8 },
-  progressLabel: { fontSize: 12, color: Colors.secondaryText, marginTop: 4 },
-  actionsCard: { marginBottom: 24, padding: 20 },
-  actionsGrid: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
-  actionButton: { alignItems: 'center', flex: 1, padding: 12 },
-  actionText: { fontSize: 12, color: Colors.primaryText, marginTop: 8, textAlign: 'center' },
+  safeArea: { 
+    flex: 1, 
+    backgroundColor: '#000000' // Pure Black
+  },
+  container: { 
+    flex: 1, 
+    paddingHorizontal: 20 
+  },
+  
+  // Header
+  headerSection: { 
+    paddingTop: 20, 
+    marginBottom: 24 
+  },
+  headerRow: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginBottom: 12 
+  },
+  greetingLabel: { 
+    fontSize: 14, 
+    color: '#A1A1A1', 
+    textTransform: 'uppercase', 
+    letterSpacing: 0.5,
+    fontWeight: '600',
+    marginBottom: 4
+  },
+  headerTitle: { 
+    fontSize: 28, 
+    fontWeight: '800', 
+    color: '#FFFFFF',
+    letterSpacing: -0.5
+  },
+  avatar: { 
+    width: 50, 
+    height: 50, 
+    borderRadius: 16,
+    borderWidth: 2, 
+    borderColor: '#333',
+  },
+  planBadgeContainer: {
+    flexDirection: 'row',
+  },
+  planBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1C1C1E', // Dark Surface
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#333'
+  },
+  planBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFF',
+    marginLeft: 6,
+  },
+
+  // Quote Card
+  quoteCard: {
+    backgroundColor: '#1C1C1E',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.orange
+  },
+  quoteHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 6
+  },
+  quoteTitle: {
+    color: Colors.orange,
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1
+  },
+  quoteText: {
+    color: '#FFF',
+    fontSize: 15,
+    fontStyle: 'italic',
+    lineHeight: 22,
+    fontWeight: '500'
+  },
+
+  // Stats Grid
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 32,
+    gap: 12,
+  },
+  statBox: {
+    flex: 1,
+    backgroundColor: '#1C1C1E', // Dark Surface
+    padding: 16,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  statIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#888',
+    fontWeight: '500',
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 16,
+  },
+
+  // Widgets
+  widgetContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#1C1C1E', // Dark Surface
+    borderRadius: 24,
+    marginBottom: 20,
+    overflow: 'hidden',
+    minHeight: 130,
+  },
+  widgetLeftStrip: {
+    width: 6,
+    height: '100%',
+  },
+  widgetContent: {
+    flex: 1,
+    padding: 20,
+  },
+  widgetHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  widgetTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  widgetBody: {
+    fontSize: 14,
+    color: '#CCC',
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  widgetFooter: {
+    flexDirection: 'row',
+    marginTop: 'auto',
+  },
+  tag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2C2C2E', // Slightly lighter gray for pill
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  tagText: {
+    fontSize: 11,
+    color: '#CCC',
+    marginLeft: 4,
+    fontWeight: '500',
+  },
+
+  // Actions
+  actionGrid: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  actionCard: {
+    flex: 1,
+    backgroundColor: '#1C1C1E', // Dark Surface
+    padding: 16,
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  actionCardTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+
+  // Empty State
+  emptyStateContainer: {
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#1C1C1E',
+    borderRadius: 24,
+    marginTop: 10,
+  },
+  emptyIconBubble: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(231, 111, 81, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  primaryButton: {
+    backgroundColor: '#FFF', // White Button for high contrast
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+  },
+  primaryButtonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 8,
+  },
 });
